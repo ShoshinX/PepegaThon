@@ -229,20 +229,43 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
 
         self.transport.write(json.dumps(res).encode())
 
-    def addconres_handler(self, json_obj):
-        # {"opcode": "ADDCONRES", "bool": <Boolean>}
-        pass
+    def getallcon_handler(self, json_obj):
+        # {"opcode": "GETALLCON", "data": <string>}
+        # sample response
+        res = {"opcode": "GETALLCONRES", "data": None}
 
-    def addconapires_handler(self, json_obj):
-        # {"opcode": "ADDCONAPIRES", "bool": <Boolean>}
-        pass
+        user = json_obj["data"]
+        res["data"] = get_contracts(user, "all")
+
+        self.transport.write(json.dumps(res).encode())
+
+    def getincon_handler(self, json_obj):
+        # {"opcode": "GETINCON", "data": <string>}
+        # sample response
+        res = {"opcode": "GETINCONRES", "data": None}
+
+        user = json_obj["data"]
+        res["data"] = get_contracts(user, "incoming")
+
+        self.transport.write(json.dumps(res).encode())
+
+    def getoutcon_handler(self, json_obj):
+        # {"opcode": "GETOUTCON", "data": <string>}
+        # sample response
+        res = {"opcode": "GETOUTCONRES", "data": None}
+
+        user = json_obj["data"]
+        res["data"] = get_contracts(user, "outgoing")
+
+        self.transport.write(json.dumps(res).encode())
 
     handler_map = {
         "PING": ping_handler,
         "PONG": pong_handler,
         "ADDCON": addcon_handler,
-        "ADDCONRES": addconres_handler,
-        "ADDCONAPIRES": addconapires_handler,
+        "GETALLCON": getallcon_handler,
+        "GETOUTCON": getoutcon_handler,
+        "GETINCON": getincon_handler
     }
 
 
