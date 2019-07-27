@@ -11,7 +11,7 @@ api = Api(app)
 class PendingContracts(Resource):
     def get(self, destination):
         # TODO
-        return [{"Contract ID": "String", "Source": "String", "Payload": "String"}]
+        return [{"Contract ID": "String", "Source": "String", "Payload": "String", "Amount":56}]
 
 
 class OutgoingContracts(Resource):
