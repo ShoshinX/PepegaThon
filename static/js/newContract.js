@@ -7,11 +7,12 @@
         let payload = document.getElementById("payload").value;
         let amount = document.getElementById("amount").value;
         let data = {
-            Provider: provider,
-            Source: source,
-            Destination: destination,
-            Payload: payload,
-            Amount: amount
+            provider: provider,
+            source: source,
+            destination: destination,
+            payload: payload,
+            amount: amount,
+            signedContract: "Despacito"
         };
         console.log(data)
         fetch('http://localhost:1337/api/make_contract', {

@@ -1,11 +1,13 @@
 (function() {
-    fetch("http://lvh.me:1337/api/all_contracts/")
+    fetch("http://lvh.me:1337/api/all_transactions")
         .then(function(response) {
             return response.json();
         })
-        .then(function(myJsonArray) {
+        .then(function(responseJson) {
+            let myJsonArray = responseJson["data"];
+            console.log(responseJson);
             let contentTable = document.getElementById("contentTable");
-            let indexArray = ["Contract ID", "Source", "Provider", "Destination", "Payload"];
+            let indexArray = ["index", "source", "provider", "destination", "payload"];
             for (let i = 0; i < myJsonArray.length; i++) {
                 let newRow = document.createElement("tr");
                 for (let j = 0; j < indexArray.length + 1; j++) {
