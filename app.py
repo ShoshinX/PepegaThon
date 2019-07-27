@@ -58,7 +58,7 @@ class VerifyContract(Resource):
         parser.add_argument("ContractID", type=str)
         parser.add_argument("VerificationBoolean", type=str)
         args = parser.parse_args()
-        
+
         req = {"opcode": "SETCON", "data": None}
         req['data'] = args
 
@@ -68,34 +68,18 @@ class VerifyContract(Resource):
 class MakeContract(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("Provider", type=str)
-        parser.add_argument("Source", type=str)
-        parser.add_argument("Destination", type=str)
-        parser.add_argument("Payload", type=str)
-        parser.add_argument("Amount", type=int)
+        parser.add_argument("provider", type=str)
+        parser.add_argument("source", type=str)
+        parser.add_argument("destination", type=str)
+        parser.add_argument("payload", type=str)
+        parser.add_argument("amount", type=str)
+        parser.add_argument("signedContract", type=str)
         args = parser.parse_args()
-        req = json.dumps(
-            {
-                "opcode": "ADDCON",
-                "provider": args["Provider"],
-                "source": args["source"],
-                "destination": args["Destination"],
-                "payload": args["Payload"],
-                "amount": args["Amount"]
-            }
-        )
+        
+        req = {"opcode": "ADDCON", "data": None}
+        req['data'] = args
         # TODO
-        ret = node_request(req)
-        print(ret)
-        return [
-            {
-                "Provider": args["Provider"],
-                "Source": args["Source"],
-                "Destination": args["Destination"],
-                "Payload": args["Payload"],
-                "Amount": args["Amount"],
-            }
-        ]
+        return node_request(json.dumps(req))
 
 
 api.add_resource(PendingContracts, "/api/pending_contracts/<string:destination>")
