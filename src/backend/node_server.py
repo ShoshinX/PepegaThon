@@ -21,17 +21,36 @@ token_ledger = (json.loads(
     node_chain_instance.block_data[-1].data)).get('ledger')
 #for i in range(len(node_chain_instance.block_data)):
 #    print(str(node_chain_instance.block_data[i]))
-def get_contracts():
+def get_contracts(public_key, search_type):
+    results = {}
+    if search_type == "all":
+        return active_contract_list
+
+    elif search_type == "outgoing":
+        for i in range(len(active_contract_list)):
+            if (active_contract_list[i].get('source') ==  public_key) or (active_contract_list[i].get('provider') == public_key):
+                results.append(active_contract_list[i])
+        return results
+
+    elif search_type == "incoming":
+        for i in range(len(active_contract_list)):
+            if active_contract_list[i].get('destination') ==  public_key:
+                results.append(active_contract_list[i])
+        return results
+
+    else:
+        return None
+
 
 def add_contract(source, destination, provider, payload, amount, signedContract):
     encode_data = source.encode() + destination.encode() + provider.encode() + \
         payload.encode() + amount.encode()
-###### TEST
+    ######TEST
     #if not verify_sign(provider, encode_data, signedContract):
     #    return None
     #else:
-    ########new_contract = Contract(str(time.time()), source, destination, provider, payload, amount)
-    new_contract = Contract(str(123), source, destination, provider, payload, amount)
+    new_contract = Contract(str(time.time()), source, destination, provider, payload, amount)
+    ########new_contract = Contract(str(123), source, destination, provider, payload, amount)
     token_ledger[source] = str(int(token_ledger[source]) - int(new_contract.stake))
     token_ledger[destination] = str(int(token_ledger[destination]) - int(new_contract.stake))
     active_contract_list.append(new_contract.serialize())
@@ -133,7 +152,6 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
     def addb_handler(self, json_obj):
         # {"opcode": "ADDB", "data": <BASE64STR>}
         block = json_obj["block"]
-
 
     def addbres_handler(self, json_obj):
         # {"opcode": "ADDBRES", "bool": <Boolean>}
