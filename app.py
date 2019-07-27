@@ -1,8 +1,10 @@
 #!env/bin/python3
 from flask import Flask, request
 from flask_restful import Resource, Api
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 api = Api(app)
 
 
@@ -71,4 +73,4 @@ api.add_resource(VerifyContract, "/api/verify_contract/")
 api.add_resource(MakeContract, "/api/make_contract/")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=1337,debug=True)
