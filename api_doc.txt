@@ -36,7 +36,7 @@ POST api/make_contract/
          "Destination": string,
          "Payload": string,
          "Amount": int,
-         // SignedHash is signed hash of String([Provider, Source, Destination, Payload, Amount].join(" "))
+         // SignedHash is signed hash of String([Provider, Source, Destination, Payload, Amount].join(""))
          "SignedHash": string
      }
  }

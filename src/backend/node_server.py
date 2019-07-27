@@ -8,9 +8,7 @@ import base64
 from node import *
 from contract import Contract
 from transaction import Transaction
-# datetime may be obs
-from datetime import datetime
-from time import time
+import time
 from data import generate_data
 ########
 from verify import verify_sign
@@ -21,24 +19,65 @@ active_contract_list = []
 # get token ledger
 token_ledger = (json.loads(
     node_chain_instance.block_data[-1].data)).get('ledger')
-# for i in range(len(node_chain_instance.block_data)):
+#for i in range(len(node_chain_instance.block_data)):
 #    print(str(node_chain_instance.block_data[i]))
+def get_contracts():
 
-
-def add_contract(self, source, destination, provider, payload, amount, signedContract):
+def add_contract(source, destination, provider, payload, amount, signedContract):
     encode_data = source.encode() + destination.encode() + provider.encode() + \
         payload.encode() + amount.encode()
-######
-    if not verify_sign(provider, encode_data, signedContract):
-        return False
-    else:
-        new_contract = Contract(str(time.time()), source, destination, provider, payload, amount)
-        token_ledger[source] = token_ledger[source] - new_contract.stake
-        token_ledger[destination] = token_ledger[destination] - new_contract.stake
-        active_contract_list.append(new_contract)
+###### TEST
+    #if not verify_sign(provider, encode_data, signedContract):
+    #    return None
+    #else:
+    ########new_contract = Contract(str(time.time()), source, destination, provider, payload, amount)
+    new_contract = Contract(str(123), source, destination, provider, payload, amount)
+    token_ledger[source] = str(int(token_ledger[source]) - int(new_contract.stake))
+    token_ledger[destination] = str(int(token_ledger[destination]) - int(new_contract.stake))
+    active_contract_list.append(new_contract.serialize())
 
-        node_chain_instance.add_block(generate_data(new_contract, None, token_ledger, active_contract_list))
-        return True
+    block_data = generate_data(new_contract.serialize(), None, token_ledger, active_contract_list)
+    node_chain_instance.add_block(block_data)
+
+    '''
+    for i in range(len(node_chain_instance.block_data)):
+        print(str(node_chain_instance.block_data[i]))
+    #print((json.loads(node_chain_instance.block_data[-1].data)).get('ledger'))
+    print((json.loads(node_chain_instance.block_data[-1].data)))
+    '''
+
+    return block_data
+
+def add_transaction(source, destination, provider, payload, amount):
+
+    new_trans = Transaction(str(time.time()), source, destination, provider, payload, amount)
+    token_ledger[source] = str(int(token_ledger[source]) + int(new_trans.amount))
+    token_ledger[destination] = str(int(token_ledger[destination]) + int(new_trans.amount))
+
+    block_data = generate_data(None, new_trans.serialize(), token_ledger, active_contract_list)
+    node_chain_instance.add_block(block_data)
+
+    '''
+    for i in range(len(node_chain_instance.block_data)):
+        print(str(node_chain_instance.block_data[i]))
+    print((json.loads(node_chain_instance.block_data[-1].data)))
+    '''
+
+    return block_data
+
+def settle_contract(contract_ID, ver_boolean, user, signature):
+    encode_data = contract_ID.encode() + " ".encode() + ver_boolean.encode()
+    ###
+    #if not verify_sign(user, encode_data, signature):
+    #    return None
+    #else:
+    for i in range(len(active_contract_list)):
+        if contract_ID == active_contract_list[i].get('index'):
+            active_contract_list[i]['status'] = True
+            new_data = active_contract_list[i]
+            active_contract_list.pop(i)
+            return add_transaction(new_data.get('source'), new_data.get('destination'), new_data.get('provider'), new_data.get('payload'), new_data.get('amount'))
+    return None
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
     # Kyou, why lint error? VVV
@@ -68,7 +107,22 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         print(f"Pinging {self.transport.get_extra_info('socket')}")
         # should respond with pong
         res = {"opcode": "PONG"}
-        #res = node_chain_instance.block_data[-1].data
+
+        '''
+        print("STARTING CONTRACT\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        if add_contract("E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "UGO1pfDVmkscufjn1u4WDu5kNIBNwca0", "IFjH/fgse2+z9VDBtLDRUKUw2tfqf5b+", "water", "10000", "pog"):
+            print("IT WORKED\n\n\n\n\n\n\n\n\n\n\n\n\n")
+
+        print("settle_contract\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        if settle_contract("8e651fea0b958ce0372ca8500fff99620cc76c4083ee17d834ef240fb995778e", "E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "1", "contract_sign"):
+            print("IT WORKED\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        else:
+            print("NO SETTLE")
+        quit()
+        '''
+
+        res = node_chain_instance.block_data[-1].data
+
         self.transport.write(json.dumps(res).encode())
 
     def pong_handler(self, json_obj):
@@ -78,7 +132,8 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
 
     def addb_handler(self, json_obj):
         # {"opcode": "ADDB", "data": <BASE64STR>}
-        block = base64.decodestring(json_obj["block"])
+        block = json_obj["block"]
+
 
     def addbres_handler(self, json_obj):
         # {"opcode": "ADDBRES", "bool": <Boolean>}
