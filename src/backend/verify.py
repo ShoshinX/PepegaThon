@@ -9,5 +9,5 @@ def verify_sign(public_key, cleartext, encrypted):
     the user's private_key.
     return: Boolean. True if the signature is valid; False otherwise. 
     """
-    vk = ecdsa.VerifyingKey.from_string(b64decode(public_key.encode()))
+    vk = ecdsa.VerifyingKey.from_string(b64decode(public_key.encode()), curve=ecdsa.SECP256k1)
     return vk.verify(b64encode(encrypted.encode()), cleartext.encode())
