@@ -12,6 +12,7 @@
                     let newElement = document.createElement("td");
                     if (j === indexArray.length) {
                         let newButton = document.createElement("button");
+                        newButton.addEventListener("onclick", "submitButtonStyle");
                         newButton.innerText = "verify";
                         newElement.appendChild(newButton);
                     } else {
@@ -29,3 +30,7 @@
             }
         })
 })();
+
+function submitButtonStyle() {
+    document.getElementsByClassName("stylebutton").style.backgroundColor = "green";
+}
