@@ -58,13 +58,19 @@ with open("port_list.txt", "r") as fin:
     peers = [int(x) for x in lines]
 
 
-def node_request(port, json_obj):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(("localhost", port))
-        s.sendall(json_obj.encode())
-        res = s.recv(5120)
-        return res.decode()
+def node_request(port, json_obj, nores=False):
+    socket.timeout(0.2)
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect(("localhost", port))
+            s.sendall(json_obj.encode())
+            print("send_all done")
+            if not nores:
+                res = s.recv(5120)
+                return res.decode()
 
+    except Exception as e:
+        print(e)
 
 def add_contract(source, destination, provider, payload, amount, signedContract):
     encode_data = (
@@ -99,6 +105,9 @@ def add_contract(source, destination, provider, payload, amount, signedContract)
     """
 
     return block_data
+
+def add_block_data(block_data):
+    node_chain_instance.add_block(block_data)
 
 
 def add_transaction(source, destination, provider, payload, amount):
@@ -186,7 +195,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
             print("NO SETTLE")
         quit()
         """
-        res = add_contract("E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "UGO1pfDVmkscufjn1u4WDu5kNIBNwca0", "IFjH/fgse2+z9VDBtLDRUKUw2tfqf5b+", "water", "10000", "pog")
+        #res = add_contract("E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "UGO1pfDVmkscufjn1u4WDu5kNIBNwca0", "IFjH/fgse2+z9VDBtLDRUKUw2tfqf5b+", "water", "10000", "pog")
         for peer in peers:
             if peer != int(argv[1]):
                 node_request(peer, json.dumps({"opcode": "PONG"}))
@@ -198,6 +207,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         # {"opcode": "PONG"}
         # handle pongs
         print(f"Ponged from {self.transport.get_extra_info('socket')}")
+        self.transport.write("OK".encode())
 
     """
     # node list
@@ -211,12 +221,11 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
     """
 
     def addcon_handler(self, json_obj):
-        # {"opcode": "ADDCON", "data": <Dict>}
+        # {"opcode": "ADDCON", "data": {"source": "source", "destination": "d", "provider": "p", "amount": "a", "signedContract": "s"}}
         # sample response
-        res = {"opcode": "ADDCON", "data": None}
+        res = {"opcode": "ADDCONRES", "data": None}
 
-        #contract = json_obj["data"]
-        '''
+        contract = json_obj["data"]
         res["data"] = add_contract(
             contract.get("source"),
             contract.get("destination"),
@@ -225,20 +234,29 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
             contract.get("amount"),
             contract.get("signedContract"),
         )
-        '''
-        res["data"] = add_contract("E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "UGO1pfDVmkscufjn1u4WDu5kNIBNwca0", "IFjH/fgse2+z9VDBtLDRUKUw2tfqf5b+", "water", "10000", "pog")
+        #res["data"] = add_contract("E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "UGO1pfDVmkscufjn1u4WDu5kNIBNwca0", "IFjH/fgse2+z9VDBtLDRUKUw2tfqf5b+", "water", "10000", "pog")
 
         for peer in peers:
             if peer != int(argv[1]):
-                node_request(peer, json.dumps(res))
+                node_request(peer, json.dumps(res), nores=True)
                 print("log_sent")
+
+    def addconres_handler(self, json_obj):
+        # sample response
+        res = {"opcode": "PONG"}
+
+        data = json_obj["data"]
+        add_block_data(data)
+        for i in range(len(node_chain_instance.block_data)):
+            print(str(node_chain_instance.block_data[i]))
+        print((json.loads(node_chain_instance.block_data[-1].data)))
 
         self.transport.write(json.dumps(res).encode())
 
     def setcon_handler(self, json_obj):
-        # {"opcode": "ADDCON", "data": <Dict>}
+        # {"opcode": "SETCON", "data": <Dict>}
         # sample response
-        res = {"opcode": "SETCON", "data": None}
+        res = {"opcode": "SETCONRES", "data": None}
 
         contreq = json_obj["data"]
         res["data"] = settle_contract(
@@ -247,10 +265,23 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
             contreq.get("User"),
             contreq.get("Data")
         )
+        #res["data"] = settle_contract("8e651fea0b958ce0372ca8500fff99620cc76c4083ee17d834ef240fb995778e", "E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "1", "contract_sign")
 
         for peer in peers:
             if peer != int(argv[1]):
                 node_request(peer, json.dumps(res))
+
+    def setconres_handler(self, json_obj):
+        # {"opcode": "SETCONRES", "data": <Dict>}
+        # sample response
+        res = {"opcode": "PONG"}
+
+        data = json_obj["data"]
+        add_block_data(data)
+        print("DONE")
+        for i in range(len(node_chain_instance.block_data)):
+            print(str(node_chain_instance.block_data[i]))
+        print((json.loads(node_chain_instance.block_data[-1].data)))
 
         self.transport.write(json.dumps(res).encode())
 
@@ -289,6 +320,8 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         "PONG": pong_handler,
         "ADDCON": addcon_handler,
         "SETCON": setcon_handler,
+        "ADDCONRES": addconres_handler,
+        "SETCONRES": setconres_handler,
         "GETALLCON": getallcon_handler,
         "GETOUTCON": getoutcon_handler,
         "GETINCON": getincon_handler

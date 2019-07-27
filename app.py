@@ -1,5 +1,6 @@
 #!env/bin/python3
 import socket
+import json
 
 from flask import Flask, request
 from flask_restful import Api, Resource, reqparse
@@ -11,7 +12,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 api = Api(app)
 
 
-PORT = 1338
+PORT = 6969
 
 
 def node_request(json_obj):
@@ -25,41 +26,27 @@ def node_request(json_obj):
 class PendingContracts(Resource):
     def get(self, destination):
         # TODO
-        return [
-            {
-                "Contract ID": "String",
-                "Source": "String",
-                "Payload": "String",
-                "Amount": 56,
-            }
-        ]
+        res = {"opcode": "GETINCON", "data": None}
+        res['data'] = destination
+
+        return node_request(json.dumps(res))
 
 
 class OutgoingContracts(Resource):
     def get(self, provider):
         # TODO
-        return [
-            {
-                "Contract ID": "String",
-                "Provider": "string",
-                "Destination": "String",
-                "Payload": "String",
-            }
-        ]
+        res = {"opcode": "GETOUTCON", "data": None}
+        res['data'] = provider
+
+        return node_request(json.dumps(res))
 
 
 class AllContracts(Resource):
     def get(self):
         # TODO
-        return [
-            {
-                "Contract ID": "String",
-                "Source": "string",
-                "Provider": "string",
-                "Destination": "String",
-                "Payload": "String",
-            }
-        ]
+        res = {"opcode": "GETALLCON", "data": None}
+        
+        return node_request(json.dumps(res))
 
 
 class VerifyContract(Resource):
@@ -69,6 +56,7 @@ class VerifyContract(Resource):
         parser.add_argument("User", type=str)
         parser.add_argument("Data", type=str)
         parser.add_argument("VerificationFailed", type=bool)
+        req = json.dumps({"opcode": ""})
         args = parser.parse_args()
         return [
             {
@@ -81,7 +69,6 @@ class VerifyContract(Resource):
 
 class MakeContract(Resource):
     def post(self):
-        # TODO
         parser = reqparse.RequestParser()
         parser.add_argument("Provider", type=str)
         parser.add_argument("Source", type=str)
@@ -89,7 +76,19 @@ class MakeContract(Resource):
         parser.add_argument("Payload", type=str)
         parser.add_argument("Amount", type=int)
         args = parser.parse_args()
-        print(args)
+        req = json.dumps(
+            {
+                "opcode": "ADDCON",
+                "provider": args["Provider"],
+                "source": args["source"],
+                "destination": args["Destination"],
+                "payload": args["Payload"],
+                "amount": args["Amount"]
+            }
+        )
+        # TODO
+        ret = node_request(req)
+        print(ret)
         return [
             {
                 "Provider": args["Provider"],
