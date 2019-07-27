@@ -6,7 +6,6 @@ import hashlib
 import datetime
 import json
 
-
 class Blockchain(object):
     def __init__(self):
         self.block_data = []
@@ -49,3 +48,8 @@ class Blockchain(object):
         veri_block = Block(last_block.index + 1, block.get('timestamp'),
                            block.get('data'), last_block.curr_hash)
         return veri_block.curr_hash == block.get('curr_hash')
+
+    def add_block(self, data):
+        block = self.create_block(data)
+        # get consensus here with other nodes
+        self.block_data.append(block)
