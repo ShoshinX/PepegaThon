@@ -4,15 +4,38 @@ import asyncio
 from sys import argv
 import signal
 import json
+import base64
+from node import *
+from contract import Contract
+from transaction import Transaction
+# datetime may be obs
+from datetime import datetime
+from time import time
 
+node_chain_instance = Blockchain()
+# contracts to be added to the BC
+pending_contract_list = []
+# active contracts
+active_contract_list = []
+# get token ledger
+token_ledger = (json.loads(node_chain_instance.block_data[-1].data)).get('ledger')
+#for i in range(len(node_chain_instance.block_data)):
+#    print(str(node_chain_instance.block_data[i]))
+
+def add_contract(self, source, destination, provider, payload, amount, signedContract):
+    pass
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
+    #Kyou, why lint error? VVV
     def connection_made(self, transport: asyncio.Transport) -> None:
         loop = asyncio.get_event_loop()
         self.client_info = transport.get_extra_info("peername")
         self.transport = transport
         # Close the connection in 10 seconds if no data received.
         self.timeout_timer = loop.call_later(10, self.transport.close)
+
+    def connection_lost(self, exc) -> None:
+        pass
 
     def data_received(self, data: bytes) -> None:
         self.timeout_timer.cancel()
@@ -25,42 +48,42 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         else:
             print(f"Invalid opcode {opcode}")
 
-        self.transport.close()
-
     def ping_handler(self, json_obj):
         # {"opcode": "PING"}
+        print(f"Pinging {self.transport.get_extra_info('socket')}")
         # should respond with pong
-        # self.transport.write()
-        return
+        res = {"opcode": "PONG"}
+        #res = node_chain_instance.block_data[-1].data
+        self.transport.write(json.dumps(res).encode())
 
     def pong_handler(self, json_obj):
         # {"opcode": "PONG"}
         # handle pongs
-        return
+        print(f"Ponged from {self.transport.get_extra_info('socket')}")
 
     def addb_handler(self, json_obj):
-        # {"opcode": "ADDB", "addBlock": <BASE64STR>}
-        return
+        # {"opcode": "ADDB", "data": <BASE64STR>}
+        block = base64.decodestring(json_obj["block"])
 
     def addbres_handler(self, json_obj):
         # {"opcode": "ADDBRES", "bool": <Boolean>}
-        return
+        pass
 
     def valb_handler(self, json_obj):
-        # {"opcode": "VALB", validateBlock: <BASE64STR>}
-        return
+        # {"opcode": "VALB", "data": <BASE64STR>}
+        block = base64.decodestring(json_obj["block"])
 
     def valbres_handler(self, json_obj):
         # {"opcode": "VALBRES", "bool": <Boolean>}
-        return
+        pass
 
     def consensus_handler(self, json_obj):
         # {"opcode": "CONSENSUS", "data": <BASE64STR>}
-        return
+        pass
 
     def consensusres_handler(self, json_obj):
         # {"opcode": "CONSENSUSRES", "data": <BASE64STR>}
-        return
+        block = base64.decodestring(json_obj["block"])
 
     handler_map = {
         "PING": ping_handler,
