@@ -2,7 +2,7 @@ import hashlib
 
 class Block(object):
     def __str__(self):
-        return "Block " + str(self.index) + " - " + self.data + "\n"
+        return "Block " + str(self.index) + " - " + self.curr_hash + " - " + self.prev_hash + "\n"
 
     # data passed must be a json
     def __init__(self, index, timestamp, data, prev_hash):

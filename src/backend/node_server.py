@@ -8,7 +8,9 @@ import base64
 from node import *
 from contract import Contract
 from transaction import Transaction
+# datetime may be obs
 from datetime import datetime
+from time import time
 
 node_chain_instance = Blockchain()
 # contracts to be added to the BC
@@ -17,6 +19,8 @@ pending_contract_list = []
 active_contract_list = []
 # get token ledger
 token_ledger = (json.loads(node_chain_instance.block_data[-1].data)).get('ledger')
+#for i in range(len(node_chain_instance.block_data)):
+#    print(str(node_chain_instance.block_data[i]))
 
 def add_contract(self, source, destination, payload, amount, provider, signedContract):
     pass

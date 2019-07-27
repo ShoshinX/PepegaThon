@@ -52,7 +52,5 @@ class Blockchain(object):
                            block.get('data'), last_block.curr_hash)
         return veri_block.curr_hash == block.get('curr_hash')
 
-    def add_block(self, data):
-        block = self.create_block(data)
-        # get consensus here with other nodes
+    def add_block(self, block):
         self.block_data.append(block)
