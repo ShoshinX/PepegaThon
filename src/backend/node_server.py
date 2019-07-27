@@ -58,13 +58,19 @@ with open("port_list.txt", "r") as fin:
     peers = [int(x) for x in lines]
 
 
-def node_request(port, json_obj):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(("localhost", port))
-        s.sendall(json_obj.encode())
-        res = s.recv(5120)
-        return res.decode()
+def node_request(port, json_obj, nores=False):
+    socket.timeout(0.2)
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect(("localhost", port))
+            s.sendall(json_obj.encode())
+            print("send_all done")
+            if not nores:
+                res = s.recv(5120)
+                return res.decode()
 
+    except Exception as e:
+        print(e)
 
 def add_contract(source, destination, provider, payload, amount, signedContract):
     encode_data = (
@@ -198,6 +204,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         # {"opcode": "PONG"}
         # handle pongs
         print(f"Ponged from {self.transport.get_extra_info('socket')}")
+        self.transport.write("OK".encode())
 
     """
     # node list
@@ -211,7 +218,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
     """
 
     def addcon_handler(self, json_obj):
-        # {"opcode": "ADDCON", "data": <Dict>}
+        # {"opcode": "ADDCON", "data": {"source": "source", "destination": "d", "provider": "p", "amount": "a", "signedContract": "s"}}
         # sample response
         res = {"opcode": "ADDCON", "data": None}
 
@@ -230,7 +237,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
 
         for peer in peers:
             if peer != int(argv[1]):
-                node_request(peer, json.dumps(res))
+                node_request(peer, json.dumps(res), nores=True)
                 print("log_sent")
 
         self.transport.write(json.dumps(res).encode())
