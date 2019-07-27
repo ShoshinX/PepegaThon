@@ -12,7 +12,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 api = Api(app)
 
 
-PORT = 1338
+PORT = 6969
 
 
 def node_request(json_obj):
@@ -26,41 +26,27 @@ def node_request(json_obj):
 class PendingContracts(Resource):
     def get(self, destination):
         # TODO
-        return [
-            {
-                "Contract ID": "String",
-                "Source": "String",
-                "Payload": "String",
-                "Amount": 56,
-            }
-        ]
+        res = {"opcode": "GETINCON", "data": None}
+        res['data'] = destination
+
+        return node_request(json.dumps(res))
 
 
 class OutgoingContracts(Resource):
     def get(self, provider):
         # TODO
-        return [
-            {
-                "Contract ID": "String",
-                "Provider": "string",
-                "Destination": "String",
-                "Payload": "String",
-            }
-        ]
+        res = {"opcode": "GETOUTCON", "data": None}
+        res['data'] = provider
+
+        return node_request(json.dumps(res))
 
 
 class AllContracts(Resource):
     def get(self):
         # TODO
-        return [
-            {
-                "Contract ID": "String",
-                "Source": "string",
-                "Provider": "string",
-                "Destination": "String",
-                "Payload": "String",
-            }
-        ]
+        res = {"opcode": "GETALLCON", "data": None}
+        
+        return node_request(json.dumps(res))
 
 
 class VerifyContract(Resource):
