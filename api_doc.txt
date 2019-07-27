@@ -22,6 +22,8 @@ GET api/all_contracts/
 // Primarily used by the district office to verify payload receipt. May also be used by the district office to close contracts if the deadline has passed.
 POST api/verify_contract/
  - Params: {
+     "ContractID": string,
+     "VerifiedBoolean": string,
      "User": string,
      // Data is a signed String(ContractID + " " + VerifiedBoolean)
      "Data": string
@@ -36,7 +38,7 @@ POST api/make_contract/
          "Destination": string,
          "Payload": string,
          "Amount": int,
-         // SignedHash is signed hash of String([Provider, Source, Destination, Payload, Amount].join(" "))
+         // SignedHash is signed hash of String([Provider, Source, Destination, Payload, Amount].join(""))
          "SignedHash": string
      }
  }

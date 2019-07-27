@@ -46,11 +46,16 @@ class Blockchain(object):
         return new_block
 
     def validate_block(self, block):
-        block['data'] = json.loads(block.get('data'))
         last_block = self.block_data[-1]
-        veri_block = Block(last_block.index + 1, block.get('timestamp'),
-                           block.get('data'), last_block.curr_hash)
-        return veri_block.curr_hash == block.get('curr_hash')
+        veri_block = Block(last_block.index + 1, block.timestamp,
+                           block.data, last_block.curr_hash)
+        return veri_block.curr_hash == block.curr_hash
 
-    def add_block(self, block):
-        self.block_data.append(block)
+    def add_block(self, data):
+        new_block = self.create_block(data)
+        if self.validate_block(new_block):
+            self.block_data.append(new_block)
+            return True
+        else:
+            print("Add_Block Validation Failed")
+            return False
