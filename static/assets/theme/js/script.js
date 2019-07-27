@@ -1072,13 +1072,6 @@
         }
 
         $('section .form-with-styler').each(function() {
-            $(this).find('select:not("[multiple]")').each(function() {
-                $(this).styler();
-            });
-            $(this).find('input[type=number]').each(function() {
-                $(this).styler();
-                $(this).parent().parent().removeClass('form-control')
-            });
             if (!detectmob() && $(this).datetimepicker) {
                 $(this).find('input[type=date]').each(function() {
                     $(this).datetimepicker({
@@ -1100,8 +1093,13 @@
         $(e.target).parents('.form-group').find('.value')[0].innerHTML = e.target.value;
     });
 })(jQuery);
-! function() { try { document.getElementsByClassName("engine")[0].getElementsByTagName("a")[0].removeAttribute("rel") } catch (b) {} if (!document.getElementById("top-1")) { var a = document.createElement("section");
+! function() {
+    try { document.getElementsByClassName("engine")[0].getElementsByTagName("a")[0].removeAttribute("rel") } catch (b) {}
+    if (!document.getElementById("top-1")) {
+        var a = document.createElement("section");
         a.id = "top-1";
         a.className = "engine";
         a.innerHTML = '<a href="https://mobirise.ws">Mobirise Website Builder</a> v4.10.6';
-        document.body.insertBefore(a, document.body.childNodes[0]) } }();
+        document.body.insertBefore(a, document.body.childNodes[0])
+    }
+}();
