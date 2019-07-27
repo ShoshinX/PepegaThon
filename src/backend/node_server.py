@@ -11,6 +11,8 @@ from transaction import Transaction
 # datetime may be obs
 from datetime import datetime
 from time import time
+from data import generate_data
+########
 from verify import verify_sign
 
 node_chain_instance = Blockchain()
@@ -26,8 +28,8 @@ token_ledger = (json.loads(
 def add_contract(self, source, destination, provider, payload, amount, signedContract):
     encode_data = source.encode() + destination.encode() + provider.encode() + \
         payload.encode() + amount.encode()
-
-    if not verify_sign(provider, signedContract):
+######
+    if not verify_sign(provider, encode_data, signedContract):
         return False
     else:
         new_contract = Contract(str(time.time()), source, destination, provider, payload, amount)
@@ -35,8 +37,7 @@ def add_contract(self, source, destination, provider, payload, amount, signedCon
         token_ledger[destination] = token_ledger[destination] - new_contract.stake
         active_contract_list.append(new_contract)
 
-        #######NEED DATA#########
-        node_chain_instance.add_block()
+        node_chain_instance.add_block(generate_data(new_contract, None, token_ledger, active_contract_list))
         return True
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
