@@ -8,7 +8,7 @@
             let myJsonArray = JSON.parse(jsonObject).data;
             console.log(myJsonArray);
             let contentTable = document.getElementById("contentTable");
-            let indexArray = ["index", "source", "payload", "amount"];
+            let indexArray = ["index", "source", "provider", "destination", "payload", "amount"];
             for (let i = 0; i < myJsonArray.length; i++) {
                 let newRow = document.createElement("tr");
                 let json = {};
