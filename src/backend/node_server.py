@@ -241,6 +241,8 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
                 node_request(peer, json.dumps(res), nores=True)
                 print("log_sent")
 
+        self.transport.write("OK".encode())
+
     def addconres_handler(self, json_obj):
         # sample response
         res = {"opcode": "PONG"}
@@ -270,6 +272,8 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         for peer in peers:
             if peer != int(argv[1]):
                 node_request(peer, json.dumps(res))
+
+        self.transport.write("OK".encode())
 
     def setconres_handler(self, json_obj):
         # {"opcode": "SETCONRES", "data": <Dict>}
