@@ -28,7 +28,10 @@ token_ledger = (json.loads(node_chain_instance.block_data[-1].data)).get("ledger
 def get_contracts(public_key, search_type):
     results = {}
     if search_type == "all":
-        return active_contract_list
+        if len(active_contract_list) == 0:
+            return results
+        else:
+            return active_contract_list
 
     elif search_type == "outgoing":
         for i in range(len(active_contract_list)):
