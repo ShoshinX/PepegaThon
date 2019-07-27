@@ -20,8 +20,6 @@ node_chain_instance = Blockchain()
 active_contract_list = []
 # get token ledger
 token_ledger = (json.loads(node_chain_instance.block_data[-1].data)).get("ledger")
-# node list
-node_list = {"localhost": 1337, "localhost": 1338}
 
 # for i in range(len(node_chain_instance.block_data)):
 #    print(str(node_chain_instance.block_data[i]))
@@ -190,6 +188,10 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         """
         res = node_chain_instance.block_data[-1].data
 
+        for peer in peers:
+            if peer != int(argv[1]):
+                node_request(peer, json.dumps({"opcode": "PONG"}))
+
         self.transport.write(json.dumps(res).encode())
 
     def pong_handler(self, json_obj):
@@ -241,8 +243,6 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         "ADDCON": addcon_handler,
         "ADDCONRES": addconres_handler,
         "ADDCONAPIRES": addconapires_handler,
-        "SETCON": setcon_handler,
-        "SETCONRES": setconres_handler,
     }
 
 
