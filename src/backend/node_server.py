@@ -38,7 +38,7 @@ def add_contract(self, source, destination, provider, payload, amount, signedCon
         active_contract_list.append(new_contract)
 
         #######NEED DATA#########
-        node_chain_instance.add_block(generate_data(contracts, transactions, ledger, active_contracts))
+        node_chain_instance.add_block(generate_data(new_contract, None, token_ledger, active_contract_list))
         return True
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
