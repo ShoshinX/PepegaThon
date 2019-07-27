@@ -55,16 +55,14 @@ class VerifyContract(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("User", type=str)
         parser.add_argument("Data", type=str)
-        parser.add_argument("VerificationFailed", type=bool)
-        req = json.dumps({"opcode": ""})
+        parser.add_argument("ContractID", type=str)
+        parser.add_argument("VerificationBoolean", type=str)
         args = parser.parse_args()
-        return [
-            {
-                "User": args["User"],
-                "Data": args["Data"],
-                "VerificationFailed": args["VerificationFailed"],
-            }
-        ]
+        
+        req = {"opcode": "SETCON", "data": None}
+        req['data'] = args
+
+        return node_request(json.dumps(req))
 
 
 class MakeContract(Resource):
