@@ -577,20 +577,17 @@
                 function elCarouselItem(element) {
                     if (element.parents('.carousel-item').css('display') !== 'none') return false;
                     var parentEl = element.parents('.carousel-item').parent();
-                    if (parentEl.find('.carousel-item.active .hidden.animated').lenght){
+                    if (parentEl.find('.carousel-item.active .hidden.animated').lenght) {
                         return false;
-                    }
-                    else if (parentEl.attr('data-visible') > 1){
+                    } else if (parentEl.attr('data-visible') > 1) {
                         var visibleSlides = parentEl.attr('data-visible');
-                        if (element.parents().is('.cloneditem-' + (visibleSlides - 1)) && element.parents('.cloneditem-' + (visibleSlides - 1)).attr('data-cloned-index') >= visibleSlides){
+                        if (element.parents().is('.cloneditem-' + (visibleSlides - 1)) && element.parents('.cloneditem-' + (visibleSlides - 1)).attr('data-cloned-index') >= visibleSlides) {
                             return true;
-                        }
-                        else{
+                        } else {
                             element.removeClass('animated hidden');
                             return false;
                         }
-                    }
-                    else return true;
+                    } else return true;
                 }
 
                 function checkIfInView() {
@@ -607,7 +604,7 @@
 
                         // check to see if this current element is within viewport
                         if ((((element_bottom_position >= window_top_position) &&
-                            (element_top_position <= window_bottom_position)) || elCarouselItem($element)) &&
+                                (element_top_position <= window_bottom_position)) || elCarouselItem($element)) &&
                             ($element.hasClass('hidden'))) {
                             $element.removeClass('hidden').addClass('fadeInUp')
                                 .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
@@ -659,7 +656,7 @@
     if (!isBuilder) {
         $('.mbr-arrow').on('click', function(e) {
             var $next = $(e.target).closest('section').next();
-            if($next.hasClass('engine')){
+            if ($next.hasClass('engine')) {
                 $next = $next.closest('section').next();
             }
             var offset = $next.offset();
@@ -774,7 +771,7 @@
                 $width = $(window).width(),
                 $collapsed = $menu.find('.navbar').hasClass('collapsed');
             // check if collapsed on
-            if (!$collapsed ){
+            if (!$collapsed) {
                 // check width device
                 if ($width > 991) {
                     $menu.find('ul.navbar-nav li.dropdown').hover(
@@ -802,29 +799,31 @@
                         }
                     );
                 }
-            }    
+            }
         }
     }
 
     // Functions from plugins for
     // compatible with old projects 
-    function setActiveCarouselItem(card){
-       var $target = $(card).find('.carousel-item:first');
-       $target.addClass('active');
+    function setActiveCarouselItem(card) {
+        var $target = $(card).find('.carousel-item:first');
+        $target.addClass('active');
     }
-    function initTestimonialsCarousel(card){
+
+    function initTestimonialsCarousel(card) {
         var $target = $(card),
-            $carouselID = $target.attr('ID') +"-carousel"; 
-        $target.find('.carousel').attr('id',$carouselID);
-        $target.find('.carousel-controls a').attr('href','#'+$carouselID);
-        $target.find('.carousel-indicators li').attr('data-target','#'+$carouselID);
-        setActiveCarouselItem($target);  
+            $carouselID = $target.attr('ID') + "-carousel";
+        $target.find('.carousel').attr('id', $carouselID);
+        $target.find('.carousel-controls a').attr('href', '#' + $carouselID);
+        $target.find('.carousel-indicators li').attr('data-target', '#' + $carouselID);
+        setActiveCarouselItem($target);
     }
-    function initClientCarousel(card){
+
+    function initClientCarousel(card) {
         var $target = $(card),
-        countElems = $target.find('.carousel-item').length,
-        visibleSlides = $target.find('.carousel-inner').attr('data-visible');
-        if (countElems < visibleSlides){
+            countElems = $target.find('.carousel-item').length,
+            visibleSlides = $target.find('.carousel-inner').attr('data-visible');
+        if (countElems < visibleSlides) {
             visibleSlides = countElems;
         }
         $target.find('.carousel-inner').attr('class', 'carousel-inner slides' + visibleSlides);
@@ -852,11 +851,12 @@
             }
         });
     }
-    function updateClientCarousel(card){
+
+    function updateClientCarousel(card) {
         var $target = $(card),
             countElems = $target.find('.carousel-item').length,
             visibleSlides = $target.find('.carousel-inner').attr('data-visible');
-        if (countElems < visibleSlides){
+        if (countElems < visibleSlides) {
             visibleSlides = countElems;
         }
         $target.find('.clonedCol').remove();
@@ -872,7 +872,8 @@
             }
         });
     }
-    function clickHandler(e){
+
+    function clickHandler(e) {
         e.stopPropagation();
         e.preventDefault();
 
@@ -888,7 +889,7 @@
             curIndex = curItem.index();
         }
         var item = $($target.closest('.carousel-inner').find('.carousel-item')[curIndex]).find('img')[0];
-                        
+
         if ($target.parents('.clonedCol').length > 0) {
             item.click();
         }
@@ -896,6 +897,7 @@
     $.fn.outerFind = function(selector) {
         return this.find(selector).addBack(selector);
     };
+
     function initTabs(target) {
         if ($(target).find('.nav-tabs').length !== 0) {
             $(target).outerFind('section[id^="tabs"]').each(function() {
@@ -918,102 +920,101 @@
             });
         }
     }
-    function clickPrev(event){
+
+    function clickPrev(event) {
         event.stopPropagation();
         event.preventDefault();
     }
-    if(!isBuilder){
-        if(typeof window.initClientPlugin ==='undefined'){
-            if($(document.body).find('.clients').length!=0){
+    if (!isBuilder) {
+        if (typeof window.initClientPlugin === 'undefined') {
+            if ($(document.body).find('.clients').length != 0) {
                 window.initClientPlugin = true;
                 $(document.body).find('.clients').each(function(index, el) {
-                    if(!$(this).attr('data-isinit')){
+                    if (!$(this).attr('data-isinit')) {
                         initTestimonialsCarousel($(this));
                         initClientCarousel($(this));
-                    }  
-                });  
-            } 
+                    }
+                });
+            }
         }
-        if(typeof window.initPopupBtnPlugin === 'undefined'){
-            if($(document.body).find('section.popup-btn-cards').length!=0){
+        if (typeof window.initPopupBtnPlugin === 'undefined') {
+            if ($(document.body).find('section.popup-btn-cards').length != 0) {
                 window.initPopupBtnPlugin = true;
                 $('section.popup-btn-cards .card-wrapper').each(function(index, el) {
                     $(this).addClass('popup-btn');
-                }); 
-            }      
+                });
+            }
         }
-        if(typeof window.initTestimonialsPlugin === 'undefined'){
-            if($(document.body).find('.testimonials-slider').length!=0){
+        if (typeof window.initTestimonialsPlugin === 'undefined') {
+            if ($(document.body).find('.testimonials-slider').length != 0) {
                 window.initTestimonialsPlugin = true;
-                $('.testimonials-slider').each(function(){
+                $('.testimonials-slider').each(function() {
                     initTestimonialsCarousel(this);
-                }); 
-            }      
+                });
+            }
         }
-        if (typeof window.initSwitchArrowPlugin === 'undefined'){
+        if (typeof window.initSwitchArrowPlugin === 'undefined') {
             window.initSwitchArrowPlugin = true;
             $(document).ready(function() {
-                if ($('.accordionStyles').length!=0) {
-                        $('.accordionStyles .card-header a[role="button"]').each(function(){
-                            if(!$(this).hasClass('collapsed')){
-                                $(this).addClass('collapsed');
-                            }
-                        });
-                    }
+                if ($('.accordionStyles').length != 0) {
+                    $('.accordionStyles .card-header a[role="button"]').each(function() {
+                        if (!$(this).hasClass('collapsed')) {
+                            $(this).addClass('collapsed');
+                        }
+                    });
+                }
             });
-            $('.accordionStyles .card-header a[role="button"]').click(function(){
+            $('.accordionStyles .card-header a[role="button"]').click(function() {
                 var $id = $(this).closest('.accordionStyles').attr('id'),
                     $iscollapsing = $(this).closest('.card').find('.panel-collapse');
                 if (!$iscollapsing.hasClass('collapsing')) {
-                    if ($id.indexOf('toggle') != -1){
+                    if ($id.indexOf('toggle') != -1) {
                         if ($(this).hasClass('collapsed')) {
-                            $(this).find('span.sign').removeClass('mbri-arrow-down').addClass('mbri-arrow-up'); 
+                            $(this).find('span.sign').removeClass('mbri-arrow-down').addClass('mbri-arrow-up');
+                        } else {
+                            $(this).find('span.sign').removeClass('mbri-arrow-up').addClass('mbri-arrow-down');
                         }
-                        else{
-                            $(this).find('span.sign').removeClass('mbri-arrow-up').addClass('mbri-arrow-down'); 
-                        }
-                    }
-                    else if ($id.indexOf('accordion')!=-1) {
-                        var $accordion =  $(this).closest('.accordionStyles ');
-                    
+                    } else if ($id.indexOf('accordion') != -1) {
+                        var $accordion = $(this).closest('.accordionStyles ');
+
                         $accordion.children('.card').each(function() {
-                            $(this).find('span.sign').removeClass('mbri-arrow-up').addClass('mbri-arrow-down'); 
+                            $(this).find('span.sign').removeClass('mbri-arrow-up').addClass('mbri-arrow-down');
                         });
                         if ($(this).hasClass('collapsed')) {
-                            $(this).find('span.sign').removeClass('mbri-arrow-down').addClass('mbri-arrow-up'); 
+                            $(this).find('span.sign').removeClass('mbri-arrow-down').addClass('mbri-arrow-up');
                         }
                     }
                 }
             });
         }
-        if(typeof window.initTabsPlugin === 'undefined'){
+        if (typeof window.initTabsPlugin === 'undefined') {
             window.initTabsPlugin = true;
             initTabs(document.body);
         }
-        
+
         // Fix for slider bug
-        if($('.mbr-slider.carousel').length!=0){
-            $('.mbr-slider.carousel').each(function(){
+        if ($('.mbr-slider.carousel').length != 0) {
+            $('.mbr-slider.carousel').each(function() {
                 var $slider = $(this),
                     controls = $slider.find('.carousel-control'),
                     indicators = $slider.find('.carousel-indicators li');
-                $slider.on('slide.bs.carousel', function () {
-                    controls.bind('click',function(event){
+                $slider.on('slide.bs.carousel', function() {
+                    controls.bind('click', function(event) {
                         clickPrev(event);
                     });
-                    indicators.bind('click',function(event){
+                    indicators.bind('click', function(event) {
                         clickPrev(event);
                     })
                     $slider.carousel({
-                        keyboard:false
+                        keyboard: false
                     });
-                }).on('slid.bs.carousel',function(){
+                }).on('slid.bs.carousel', function() {
                     controls.unbind('click');
                     indicators.unbind('click');
                     $slider.carousel({
-                        keyboard:true
+                        keyboard: true
                     });
-                    if($slider.find('.carousel-item.active').length>1){
+                    if ($slider.find('.carousel-item.active').length > 1) {
                         $slider.find('.carousel-item.active').eq(1).removeClass('active');
                         $slider.find('.carousel-control li.active').eq(1).removeClass('active');
                     }
@@ -1023,28 +1024,28 @@
     }
     // Form Styler
     if (isBuilder) {
-        $(document).on('add.cards', function (event) {
+        $(document).on('add.cards', function(event) {
             if ($(event.target).find('.form-with-styler').length) {
 
                 var form = $(event.target).find('.form-with-styler');
 
-                $(form).find('select:not("[multiple]")').each(function () {
+                $(form).find('select:not("[multiple]")').each(function() {
                     $(this).styler();
                 });
-                $(form).find('input[type=number]').each(function () {
+                $(form).find('input[type=number]').each(function() {
                     $(this).styler();
                     $(this).parent().parent().removeClass('form-control')
                 });
                 // documentation about plugin https://xdsoft.net/jqplugins/datetimepicker/
-                $(form).find('input[type=date]').each(function () {
-                    if($(this).datetimepicker)
+                $(form).find('input[type=date]').each(function() {
+                    if ($(this).datetimepicker)
                         $(this).datetimepicker({
                             format: 'Y-m-d',
                             timepicker: false
                         });
                 });
-                $(form).find('input[type=time]').each(function () {
-                    if($(this).datetimepicker)
+                $(form).find('input[type=time]').each(function() {
+                    if ($(this).datetimepicker)
                         $(this).datetimepicker({
                             format: 'H:i',
                             datepicker: false
@@ -1055,38 +1056,37 @@
         });
     } else {
         function detectmob() {
-            if (navigator.userAgent.match(/Android/i)
-                || navigator.userAgent.match(/webOS/i)
-                || navigator.userAgent.match(/iPhone/i)
-                || navigator.userAgent.match(/iPad/i)
-                || navigator.userAgent.match(/iPod/i)
-                || navigator.userAgent.match(/BlackBerry/i)
-                || navigator.userAgent.match(/Windows Phone/i)
-                || navigator.userAgent.match(/Firefox/i)
+            if (navigator.userAgent.match(/Android/i) ||
+                navigator.userAgent.match(/webOS/i) ||
+                navigator.userAgent.match(/iPhone/i) ||
+                navigator.userAgent.match(/iPad/i) ||
+                navigator.userAgent.match(/iPod/i) ||
+                navigator.userAgent.match(/BlackBerry/i) ||
+                navigator.userAgent.match(/Windows Phone/i) ||
+                navigator.userAgent.match(/Firefox/i)
             ) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }
 
-        $('section .form-with-styler').each(function () {
-            $(this).find('select:not("[multiple]")').each(function () {
+        $('section .form-with-styler').each(function() {
+            $(this).find('select:not("[multiple]")').each(function() {
                 $(this).styler();
             });
-            $(this).find('input[type=number]').each(function () {
+            $(this).find('input[type=number]').each(function() {
                 $(this).styler();
                 $(this).parent().parent().removeClass('form-control')
             });
             if (!detectmob() && $(this).datetimepicker) {
-                $(this).find('input[type=date]').each(function () {
+                $(this).find('input[type=date]').each(function() {
                     $(this).datetimepicker({
                         format: 'Y-m-d',
                         timepicker: false
                     });
                 });
-                $(this).find('input[type=time]').each(function () {
+                $(this).find('input[type=time]').each(function() {
                     $(this).datetimepicker({
                         format: 'H:i',
                         datepicker: false
@@ -1096,8 +1096,12 @@
         });
     }
 
-    $(document).on('change', 'input[type="range"]', function(e){
+    $(document).on('change', 'input[type="range"]', function(e) {
         $(e.target).parents('.form-group').find('.value')[0].innerHTML = e.target.value;
     });
 })(jQuery);
-!function(){try{document.getElementsByClassName("engine")[0].getElementsByTagName("a")[0].removeAttribute("rel")}catch(b){}if(!document.getElementById("top-1")){var a=document.createElement("section");a.id="top-1";a.className="engine";a.innerHTML='<a href="https://mobirise.ws">Mobirise Website Builder</a> v4.10.6';document.body.insertBefore(a,document.body.childNodes[0])}}();
+! function() { try { document.getElementsByClassName("engine")[0].getElementsByTagName("a")[0].removeAttribute("rel") } catch (b) {} if (!document.getElementById("top-1")) { var a = document.createElement("section");
+        a.id = "top-1";
+        a.className = "engine";
+        a.innerHTML = '<a href="https://mobirise.ws">Mobirise Website Builder</a> v4.10.6';
+        document.body.insertBefore(a, document.body.childNodes[0]) } }();
