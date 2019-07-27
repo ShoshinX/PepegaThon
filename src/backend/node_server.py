@@ -8,8 +8,6 @@ import base64
 
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
-    pinging = False
-
     def connection_made(self, transport: asyncio.Transport) -> None:
         loop = asyncio.get_event_loop()
         self.client_info = transport.get_extra_info("peername")
@@ -18,8 +16,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         self.timeout_timer = loop.call_later(10, self.transport.close)
 
     def connection_lost(self, exc) -> None:
-        if self.pinging:
-            print("Connection closed with active ping open!")
+        pass
 
     def data_received(self, data: bytes) -> None:
         self.timeout_timer.cancel()
@@ -38,42 +35,35 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         # should respond with pong
         res = {"opcode": "PONG"}
         self.transport.write(json.dumps(res).encode())
-        self.pinging = True
-        return
 
     def pong_handler(self, json_obj):
         # {"opcode": "PONG"}
         # handle pongs
         print(f"Ponged from {self.transport.get_extra_info('socket')}")
-        self.pinging = False
-        return
 
     def addb_handler(self, json_obj):
         # {"opcode": "ADDB", "data": <BASE64STR>}
         block = base64.decodestring(json_obj["block"])
-        return
 
     def addbres_handler(self, json_obj):
         # {"opcode": "ADDBRES", "bool": <Boolean>}
-        return
+        pass
 
     def valb_handler(self, json_obj):
         # {"opcode": "VALB", "data": <BASE64STR>}
         block = base64.decodestring(json_obj["block"])
-        return
 
     def valbres_handler(self, json_obj):
         # {"opcode": "VALBRES", "bool": <Boolean>}
-        return
+        pass
 
     def consensus_handler(self, json_obj):
         # {"opcode": "CONSENSUS", "data": <BASE64STR>}
-        return
+        pass
 
     def consensusres_handler(self, json_obj):
         # {"opcode": "CONSENSUSRES", "data": <BASE64STR>}
         block = base64.decodestring(json_obj["block"])
-        return
 
     handler_map = {
         "PING": ping_handler,
