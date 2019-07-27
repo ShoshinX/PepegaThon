@@ -23,7 +23,8 @@ GET api/all_contracts/
 POST api/verify_contract/
  - Params: {
      "User": string,
-     "Signed(Contract ID + " " + Verified Boolean)": string
+     // Data is a signed String(ContractID + " " + VerifiedBoolean)
+     "Data": string
  }
 
 // Used by the Aid Provider to specify the route to the district office.
@@ -34,7 +35,9 @@ POST api/make_contract/
          "Source": string,
          "Destination": string,
          "Payload": string,
-         "Amount": int
+         "Amount": int,
+         // SignedHash is signed hash of String([Provider, Source, Destination, Payload, Amount].join(" "))
+         "SignedHash": string
      }
  }
  - Returns: {

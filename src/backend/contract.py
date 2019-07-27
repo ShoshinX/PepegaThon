@@ -1,9 +1,8 @@
 import hashlib
 
-
 class Contract(object):
     def __str__(self):
-        return "Contract " + self.index + " - " + self.data + "\n"
+        return "Contract " + self.index + " - " + str(self.serialize()) + "\n"
 
     def __init__(self, timestamp, source, destination, provider, payload, amount):
         sha_hash = hashlib.sha256()
@@ -19,6 +18,7 @@ class Contract(object):
         self.payload = payload
         self.amount = amount
         self.status = False
+        self.stake = amount
 
     def change_status(self, status):
         if status:
@@ -37,5 +37,6 @@ class Contract(object):
         rep['payload'] = self.payload
         rep['amount'] = self.amount
         rep['status'] = self.status
+        rep['stake'] = self.stake
 
         return rep
