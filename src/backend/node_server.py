@@ -8,10 +8,15 @@ import base64
 from node import *
 from contract import Contract
 from transaction import Transaction
+from datetime import datetime
 
 node_chain_instance = Blockchain()
+# contracts to be added to the BC
 pending_contract_list = []
+# active contracts
 active_contract_list = []
+# get token ledger
+token_ledger = (json.loads(node_chain_instance.block_data[-1].data)).get('ledger')
 
 def add_contract(self, source, destination, payload, amount, provider, signedContract):
     pass
@@ -44,6 +49,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         print(f"Pinging {self.transport.get_extra_info('socket')}")
         # should respond with pong
         res = {"opcode": "PONG"}
+        #res = node_chain_instance.block_data[-1].data
         self.transport.write(json.dumps(res).encode())
 
     def pong_handler(self, json_obj):

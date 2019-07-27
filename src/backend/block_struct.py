@@ -1,15 +1,14 @@
-import json
 import hashlib
 
 class Block(object):
     def __str__(self):
-        return "Block " + self.index + " - " + self.data + "\n"
+        return "Block " + str(self.index) + " - " + self.data + "\n"
 
     # data passed must be a json
     def __init__(self, index, timestamp, data, prev_hash):
         self.index = index
         self.timestamp = timestamp
-        self.data = json.dumps(data)
+        self.data = data
         self.prev_hash = prev_hash
         self.curr_hash = self.get_curr_hash()
 
