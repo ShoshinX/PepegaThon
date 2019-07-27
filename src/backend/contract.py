@@ -20,6 +20,13 @@ class Contract(object):
         self.amount = amount
         self.status = False
 
+    def change_status(self, status):
+        if status:
+            self.status = False
+            print("We're Fucked")
+        else:
+            self.status = status
+
     def serialize(self):
         rep = {}
         rep['index'] = self.index

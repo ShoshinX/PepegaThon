@@ -11,13 +11,10 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         loop = asyncio.get_event_loop()
         self.client_info = transport.get_extra_info("peername")
         self.transport = transport
-        # Close the connection in 10 seconds if no data received.
-        self.timeout_timer = loop.call_later(10, self.transport.close)
+        transport.write()
 
     def data_received(self, data: bytes) -> None:
         self.timeout_timer.cancel()
-
-        self.transport.close()
 
 
 async def shutdown(loop: asyncio.AbstractEventLoop):
