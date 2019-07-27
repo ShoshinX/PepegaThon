@@ -186,11 +186,11 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
             print("NO SETTLE")
         quit()
         """
-        res = node_chain_instance.block_data[-1].data
-
+        res = add_contract("E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "UGO1pfDVmkscufjn1u4WDu5kNIBNwca0", "IFjH/fgse2+z9VDBtLDRUKUw2tfqf5b+", "water", "10000", "pog")
         for peer in peers:
             if peer != int(argv[1]):
                 node_request(peer, json.dumps({"opcode": "PONG"}))
+                print("log_sent")
 
         self.transport.write(json.dumps(res).encode())
 
@@ -206,14 +206,17 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         "localhost": 1338
     }
     source, destination, provider, payload, amount, signedContract
+
+    {"source":“E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "destination":"UGO1pfDVmkscufjn1u4WDu5kNIBNwca0", "provider":"IFjH/fgse2+z9VDBtLDRUKUw2tfqf5b+", "payload":"water", "amount":"10000", "signedContract":"pog”}
     """
 
     def addcon_handler(self, json_obj):
         # {"opcode": "ADDCON", "data": <Dict>}
         # sample response
-        res = {"opcode": "ADDCONRES", "data": None}
+        res = {"opcode": "ADDCON", "data": None}
 
-        contract = json_obj["data"]
+        #contract = json_obj["data"]
+        '''
         res["data"] = add_contract(
             contract.get("source"),
             contract.get("destination"),
@@ -222,24 +225,27 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
             contract.get("amount"),
             contract.get("signedContract"),
         )
+        '''
+        res["data"] = add_contract("E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "UGO1pfDVmkscufjn1u4WDu5kNIBNwca0", "IFjH/fgse2+z9VDBtLDRUKUw2tfqf5b+", "water", "10000", "pog")
 
         for peer in peers:
             if peer != int(argv[1]):
                 node_request(peer, json.dumps(res))
+                print("log_sent")
 
         self.transport.write(json.dumps(res).encode())
 
     def setcon_handler(self, json_obj):
         # {"opcode": "ADDCON", "data": <Dict>}
         # sample response
-        res = {"opcode": "SETCONRES", "data": None}
+        res = {"opcode": "SETCON", "data": None}
 
-        conreq = json_obj["data"]
+        contreq = json_obj["data"]
         res["data"] = settle_contract(
-            conreq.get("ContractID"),
-            conreq.get("VerifiedBoolean")
-            conreq.get("User")
-            conreq.get("Data")
+            contreq.get("ContractID"),
+            contreq.get("VerifiedBoolean"),
+            contreq.get("User"),
+            contreq.get("Data")
         )
 
         for peer in peers:
@@ -251,7 +257,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
     def getallcon_handler(self, json_obj):
         # {"opcode": "GETALLCON", "data": <string>}
         # sample response
-        res = {"opcode": "GETALLCONRES", "data": None}
+        res = {"opcode": "GETALLCON", "data": None}
 
         user = json_obj["data"]
         res["data"] = get_contracts(user, "all")
@@ -261,7 +267,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
     def getincon_handler(self, json_obj):
         # {"opcode": "GETINCON", "data": <string>}
         # sample response
-        res = {"opcode": "GETINCONRES", "data": None}
+        res = {"opcode": "GETINCON", "data": None}
 
         user = json_obj["data"]
         res["data"] = get_contracts(user, "incoming")
@@ -271,7 +277,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
     def getoutcon_handler(self, json_obj):
         # {"opcode": "GETOUTCON", "data": <string>}
         # sample response
-        res = {"opcode": "GETOUTCONRES", "data": None}
+        res = {"opcode": "GETOUTCON", "data": None}
 
         user = json_obj["data"]
         res["data"] = get_contracts(user, "outgoing")
