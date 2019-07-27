@@ -10,4 +10,4 @@ def verify_sign(public_key, cleartext, encrypted):
     return: Boolean. True if the signature is valid; False otherwise. 
     """
     vk = ecdsa.VerifyingKey.from_string(b64decode(public_key.encode()))
-    return vk.verify(b64encode(encrypted), cleartext.encode())
+    return vk.verify(b64encode(encrypted.encode()), cleartext.encode())
