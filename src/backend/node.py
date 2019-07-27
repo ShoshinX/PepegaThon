@@ -1,16 +1,15 @@
 from block_struct import Block
-from contract import Contract
-from transaction import Transaction
 
 import hashlib
 import datetime
 import json
 
+
 class Blockchain(object):
     def __init__(self):
         self.block_data = []
         # find a better way to generate genesis
-        # self.generate_genesis()
+        self.generate_genesis()
 
     def validate_blockchain(self):
         for i in range(len(self.block_data)):
@@ -32,8 +31,12 @@ class Blockchain(object):
         return True
 
     def generate_genesis(self):
+        with open('genesis_data.json') as json_file:
+            data = json.load(json_file)
+
         genesis_block = Block(0, datetime.utcnow(
-        ), "Why are we still here? Just to suffer? Every night, I can feel my leg… and my arm… even my fingers. The body I’ve lost… the comrades I’ve lost… won’t stop hurting… It’s like they’re all still there. You feel it, too, don’t you?", "pepega")
+        ), data, "Why are we still here? Just to suffer? Every night, I can feel my leg… and my arm… even my fingers. The body I’ve lost… the comrades I’ve lost… won’t stop hurting… It’s like they’re all still there. You feel it, too, don’t you?")
+        
         self.block_data.append(genesis_block)
 
     def create_block(self, data):

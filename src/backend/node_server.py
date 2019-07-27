@@ -10,8 +10,11 @@ from contract import Contract
 from transaction import Transaction
 
 node_chain_instance = Blockchain()
+pending_contract_list = []
+active_contract_list = []
 
-
+def add_contract(self, source, destination, payload, amount, provider, signedContract):
+    pass
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
     #Kyou, why lint error? VVV
