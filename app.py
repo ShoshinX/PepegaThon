@@ -43,7 +43,8 @@ class VerifyContract(Resource):
     def post(self):
         # TODO
         return [
-            {"User": "string", "Signed(Contract ID + " " + Verified Boolean)": "string"}
+            {"User": "string",
+                "Signed(Contract ID + " " + Verified Boolean)": "string"}
         ]
 
 
@@ -61,8 +62,10 @@ class MakeContract(Resource):
         ]
 
 
-api.add_resource(PendingContracts, "/api/pending_contracts/<string:destination>")
-api.add_resource(OutgoingContracts, "/api/outgoing_contracts/<string:provider>")
+api.add_resource(PendingContracts,
+                 "/api/pending_contracts/<string:destination>")
+api.add_resource(OutgoingContracts,
+                 "/api/outgoing_contracts/<string:provider>")
 api.add_resource(AllContracts, "/api/all_contracts/")
 api.add_resource(VerifyContract, "/api/verify_contract/")
 api.add_resource(MakeContract, "/api/make_contract/")
