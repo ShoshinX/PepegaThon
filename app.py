@@ -1,16 +1,38 @@
 #!env/bin/python3
+import socket
+
 from flask import Flask, request
-from flask_restful import Resource, Api, reqparse
+from flask_restful import Api, Resource, reqparse
+
 from flask_cors import CORS
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 api = Api(app)
 
+
+PORT = 1338
+
+
+def node_request(json_obj):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect(("localhost", PORT))
+        s.sendall(json_obj.encode())
+        res = s.recv(5120)
+        return res.decode()
+
+
 class PendingContracts(Resource):
     def get(self, destination):
         # TODO
-        return [{"Contract ID": "String", "Source": "String", "Payload": "String", "Amount":56}]
+        return [
+            {
+                "Contract ID": "String",
+                "Source": "String",
+                "Payload": "String",
+                "Amount": 56,
+            }
+        ]
 
 
 class OutgoingContracts(Resource):
@@ -46,8 +68,15 @@ class VerifyContract(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("User", type=str)
         parser.add_argument("Data", type=str)
+        parser.add_argument("VerificationFailed", type=bool)
         args = parser.parse_args()
-        return [{"User": args["User"], "Data": args["Data"]}]
+        return [
+            {
+                "User": args["User"],
+                "Data": args["Data"],
+                "VerificationFailed": args["VerificationFailed"],
+            }
+        ]
 
 
 class MakeContract(Resource):
@@ -78,4 +107,4 @@ api.add_resource(VerifyContract, "/api/verify_contract/")
 api.add_resource(MakeContract, "/api/make_contract/")
 
 if __name__ == "__main__":
-    app.run(port=1337,debug=True)
+    app.run(port=1337, debug=True)
