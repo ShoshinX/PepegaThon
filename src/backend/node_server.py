@@ -24,7 +24,9 @@ token_ledger = (json.loads(node_chain_instance.block_data[-1].data)).get("ledger
 #transactions
 transaction_list = []
 for i in range(len(node_chain_instance.block_data)):
-    transaction_list((json.loads(node_chain_instance.block_data[i].data)).get("transactions")).append()
+    transaction = (json.loads(node_chain_instance.block_data[i].data)).get("transactions")
+    if not transaction:
+        transaction_list.append(transaction)
 
 
 def get_contracts(public_key, search_type):
@@ -114,7 +116,9 @@ def add_contract(source, destination, provider, payload, amount, signedContract)
 def add_block_data(block_data):
     node_chain_instance.add_block(block_data)
     for i in range(len(node_chain_instance.block_data)):
-        transaction_list((json.loads(node_chain_instance.block_data[i].data)).get("transactions")).append()
+        transaction = (json.loads(node_chain_instance.block_data[i].data)).get("transactions")
+        if not transaction:
+            transaction_list.append(transaction)
 
 
 def add_transaction(source, destination, provider, payload, amount):
@@ -133,7 +137,9 @@ def add_transaction(source, destination, provider, payload, amount):
     node_chain_instance.add_block(block_data)
 
     for i in range(len(node_chain_instance.block_data)):
-        transaction_list((json.loads(node_chain_instance.block_data[i].data)).get("transactions")).append()
+        transaction = (json.loads(node_chain_instance.block_data[i].data)).get("transactions")
+        if not transaction:
+            transaction_list.append(transaction)
 
     """
     for i in range(len(node_chain_instance.block_data)):
