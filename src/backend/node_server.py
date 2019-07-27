@@ -153,7 +153,6 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         # {"opcode": "ADDB", "data": <BASE64STR>}
         block = json_obj["block"]
 
-
     def addbres_handler(self, json_obj):
         # {"opcode": "ADDBRES", "bool": <Boolean>}
         pass
