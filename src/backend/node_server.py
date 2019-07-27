@@ -49,8 +49,8 @@ def add_contract(source, destination, provider, payload, amount, signedContract)
     #if not verify_sign(provider, encode_data, signedContract):
     #    return None
     #else:
-    new_contract = Contract(str(time.time()), source, destination, provider, payload, amount)
-    ########new_contract = Contract(str(123), source, destination, provider, payload, amount)
+    ######new_contract = Contract(str(time.time()), source, destination, provider, payload, amount)
+    new_contract = Contract(str(123), source, destination, provider, payload, amount)
     token_ledger[source] = str(int(token_ledger[source]) - int(new_contract.stake))
     token_ledger[destination] = str(int(token_ledger[destination]) - int(new_contract.stake))
     active_contract_list.append(new_contract.serialize())
