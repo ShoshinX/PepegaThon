@@ -229,6 +229,25 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
 
         self.transport.write(json.dumps(res).encode())
 
+    def setcon_handler(self, json_obj):
+        # {"opcode": "ADDCON", "data": <Dict>}
+        # sample response
+        res = {"opcode": "SETCONRES", "data": None}
+
+        conreq = json_obj["data"]
+        res["data"] = settle_contract(
+            conreq.get("ContractID"),
+            conreq.get("VerifiedBoolean")
+            conreq.get("User")
+            conreq.get("Data")
+        )
+
+        for peer in peers:
+            if peer != int(argv[1]):
+                node_request(peer, json.dumps(res))
+
+        self.transport.write(json.dumps(res).encode())
+
     def getallcon_handler(self, json_obj):
         # {"opcode": "GETALLCON", "data": <string>}
         # sample response
@@ -263,6 +282,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         "PING": ping_handler,
         "PONG": pong_handler,
         "ADDCON": addcon_handler,
+        "SETCON": setcon_handler,
         "GETALLCON": getallcon_handler,
         "GETOUTCON": getoutcon_handler,
         "GETINCON": getincon_handler

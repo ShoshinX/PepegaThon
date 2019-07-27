@@ -22,6 +22,8 @@ GET api/all_contracts/
 // Primarily used by the district office to verify payload receipt. May also be used by the district office to close contracts if the deadline has passed.
 POST api/verify_contract/
  - Params: {
+     "ContractID": string,
+     "VerifiedBoolean": string,
      "User": string,
      // Data is a signed String(ContractID + " " + VerifiedBoolean)
      "Data": string
