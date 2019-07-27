@@ -5,7 +5,6 @@ from flask_restful import Resource, Api, reqparse
 app = Flask(__name__)
 api = Api(app)
 
-
 class PendingContracts(Resource):
     def get(self, destination):
         # TODO
