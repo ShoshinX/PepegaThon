@@ -1,10 +1,10 @@
 import json
 import hashlib
- 
+
 class Block(object):
     def __str__(self):
         return "Block " + self.index + " - " + self.data + "\n"
- 
+
     # data passed must be a json
     def __init__(self, index, timestamp, data, prev_hash):
         self.index = index
@@ -21,13 +21,13 @@ class Block(object):
         sha_hash.update(encoded_data)
         # digest or hexdigest - apparently hexdigest is safer because only hex
         return sha_hash.hexdigest()
- 
+
     def serialize(self):
         rep = {}
         rep['index'] = self.index
-        rep['timestamp'] = self.index
+        rep['timestamp'] = self.timestamp
         rep['data'] = self.data
         rep['prev_hash'] = self.prev_hash
         rep['curr_hash'] = self.curr_hash
- 
+
         return rep
