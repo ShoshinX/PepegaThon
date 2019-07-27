@@ -3,18 +3,75 @@
 import asyncio
 from sys import argv
 import signal
+import json
 
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
-
     def connection_made(self, transport: asyncio.Transport) -> None:
         loop = asyncio.get_event_loop()
         self.client_info = transport.get_extra_info("peername")
         self.transport = transport
-        transport.write()
+        # Close the connection in 10 seconds if no data received.
+        self.timeout_timer = loop.call_later(10, self.transport.close)
 
     def data_received(self, data: bytes) -> None:
         self.timeout_timer.cancel()
+        json_obj = json.loads(data.decode())
+        opcode = json_obj["opcode"]
+
+        if opcode in self.handler_map:
+            self.handler_map[opcode](self, json_obj)
+            print(f"OK {opcode}")
+        else:
+            print(f"Invalid opcode {opcode}")
+
+        self.transport.close()
+
+    def ping_handler(self, json_obj):
+        # {"opcode": "PING"}
+        # should respond with pong
+        # self.transport.write()
+        return
+
+    def pong_handler(self, json_obj):
+        # {"opcode": "PONG"}
+        # handle pongs
+        return
+
+    def addb_handler(self, json_obj):
+        # {"opcode": "ADDB", "addBlock": <BASE64STR>}
+        return
+
+    def addbres_handler(self, json_obj):
+        # {"opcode": "ADDBRES", "bool": <Boolean>}
+        return
+
+    def valb_handler(self, json_obj):
+        # {"opcode": "VALB", validateBlock: <BASE64STR>}
+        return
+
+    def valbres_handler(self, json_obj):
+        # {"opcode": "VALBRES", "bool": <Boolean>}
+        return
+
+    def consensus_handler(self, json_obj):
+        # {"opcode": "CONSENSUS", "data": <BASE64STR>}
+        return
+
+    def consensusres_handler(self, json_obj):
+        # {"opcode": "CONSENSUSRES", "data": <BASE64STR>}
+        return
+
+    handler_map = {
+        "PING": ping_handler,
+        "PONG": pong_handler,
+        "ADDB": addb_handler,
+        "ADDBRES": addbres_handler,
+        "VALB": valb_handler,
+        "VALBRES": valbres_handler,
+        "CONSENSUS": consensus_handler,
+        "CONSENSUSRES": consensusres_handler,
+    }
 
 
 async def shutdown(loop: asyncio.AbstractEventLoop):
