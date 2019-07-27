@@ -1,5 +1,6 @@
 (function() {
-    document.getElementById("button").addEventListener("click", (event) => {
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
         let provider = document.getElementById("provider").value;
         let source = document.getElementById("source").value;
         let destination = document.getElementById("destination").value;
@@ -12,15 +13,14 @@
             Payload: payload,
             Amount: amount
         };
-        console.log(data);
+        console.log(data)
         fetch('http://localhost:1337/api/make_contract', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'text/plain',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data)
             })
             .then((response) => alert("DEEZNUTS"));
-
     });
 })();
