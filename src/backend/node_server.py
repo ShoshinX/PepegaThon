@@ -5,9 +5,16 @@ from sys import argv
 import signal
 import json
 import base64
+from node import *
+from contract import Contract
+from transaction import Transaction
+
+node_chain_instance = Blockchain()
+
 
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
+    #Kyou, why lint error? VVV
     def connection_made(self, transport: asyncio.Transport) -> None:
         loop = asyncio.get_event_loop()
         self.client_info = transport.get_extra_info("peername")
