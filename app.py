@@ -1,5 +1,6 @@
 #!env/bin/python3
 import socket
+import json
 
 from flask import Flask, request
 from flask_restful import Api, Resource, reqparse
@@ -69,6 +70,7 @@ class VerifyContract(Resource):
         parser.add_argument("User", type=str)
         parser.add_argument("Data", type=str)
         parser.add_argument("VerificationFailed", type=bool)
+        req = json.dumps({"opcode": ""})
         args = parser.parse_args()
         return [
             {
@@ -81,7 +83,6 @@ class VerifyContract(Resource):
 
 class MakeContract(Resource):
     def post(self):
-        # TODO
         parser = reqparse.RequestParser()
         parser.add_argument("Provider", type=str)
         parser.add_argument("Source", type=str)
@@ -89,6 +90,19 @@ class MakeContract(Resource):
         parser.add_argument("Payload", type=str)
         parser.add_argument("Amount", type=int)
         args = parser.parse_args()
+        req = json.dumps(
+            {
+                "opcode": "ADDCON",
+                "provider": args["Provider"],
+                "source": args["source"],
+                "destination": args["Destination"],
+                "payload": args["Payload"],
+                "amount": args["Amount"]
+            }
+        )
+        # TODO
+        ret = node_request(req)
+        print(ret)
         return [
             {
                 "Provider": args["Provider"],
