@@ -1,4 +1,4 @@
-def verify_sign(public_key, signature, data):
+def verify_sign(public_key, data):
     '''
     Verifies with a public key from whom the data came that it was indeed 
     signed by their private key
@@ -16,7 +16,7 @@ def verify_sign(public_key, signature, data):
     digest = SHA256.new() 
     # Assumes the data is base64 encoded to begin with
     digest.update(b64decode(data))
-    if signer.verify(digest, b64decode(signature)):
+    if signer.verify(digest, b64decode(public_key)):
         return True
     return False
 

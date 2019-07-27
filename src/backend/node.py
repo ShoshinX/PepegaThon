@@ -52,5 +52,11 @@ class Blockchain(object):
                            block.get('data'), last_block.curr_hash)
         return veri_block.curr_hash == block.get('curr_hash')
 
-    def add_block(self, block):
-        self.block_data.append(block)
+    def add_block(self, data):
+        new_block = self.create_block(data)
+        if self.validate_block(new_block):
+            self.block_data.append(new_block)
+            return True
+        else:
+            print("Add_Block Validation Failed")
+            return False

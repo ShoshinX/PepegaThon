@@ -11,22 +11,36 @@ from transaction import Transaction
 # datetime may be obs
 from datetime import datetime
 from time import time
+from verify import verify_sign
 
 node_chain_instance = Blockchain()
-# contracts to be added to the BC
-pending_contract_list = []
 # active contracts
 active_contract_list = []
 # get token ledger
-token_ledger = (json.loads(node_chain_instance.block_data[-1].data)).get('ledger')
-#for i in range(len(node_chain_instance.block_data)):
+token_ledger = (json.loads(
+    node_chain_instance.block_data[-1].data)).get('ledger')
+# for i in range(len(node_chain_instance.block_data)):
 #    print(str(node_chain_instance.block_data[i]))
 
+
 def add_contract(self, source, destination, provider, payload, amount, signedContract):
-    pass
+    encode_data = source.encode() + destination.encode() + provider.encode() + \
+        payload.encode() + amount.encode()
+
+    if not verify_sign(provider, signedContract):
+        return False
+    else:
+        new_contract = Contract(str(time.time()), source, destination, provider, payload, amount)
+        token_ledger[source] = token_ledger[source] - new_contract.stake
+        token_ledger[destination] = token_ledger[destination] - new_contract.stake
+        active_contract_list.append(new_contract)
+
+        #######NEED DATA#########
+        node_chain_instance.add_block()
+        return True
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
-    #Kyou, why lint error? VVV
+    # Kyou, why lint error? VVV
     def connection_made(self, transport: asyncio.Transport) -> None:
         loop = asyncio.get_event_loop()
         self.client_info = transport.get_extra_info("peername")
