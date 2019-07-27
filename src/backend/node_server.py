@@ -6,10 +6,12 @@ import signal
 import json
 import base64
 from node import *
+import socket
 from contract import Contract
 from transaction import Transaction
 import time
 from data import generate_data
+
 ########
 from verify import verify_sign
 
@@ -17,13 +19,9 @@ node_chain_instance = Blockchain()
 # active contracts
 active_contract_list = []
 # get token ledger
-token_ledger = (json.loads(
-    node_chain_instance.block_data[-1].data)).get('ledger')
+token_ledger = (json.loads(node_chain_instance.block_data[-1].data)).get("ledger")
 # node list
-node_list = {
-    "localhost": 1337,
-    "localhost": 1338
-}
+node_list = {"localhost": 1337, "localhost": 1338}
 
 # for i in range(len(node_chain_instance.block_data)):
 #    print(str(node_chain_instance.block_data[i]))
@@ -36,13 +34,15 @@ def get_contracts(public_key, search_type):
 
     elif search_type == "outgoing":
         for i in range(len(active_contract_list)):
-            if (active_contract_list[i].get('source') == public_key) or (active_contract_list[i].get('provider') == public_key):
+            if (active_contract_list[i].get("source") == public_key) or (
+                active_contract_list[i].get("provider") == public_key
+            ):
                 results.append(active_contract_list[i])
         return results
 
     elif search_type == "incoming":
         for i in range(len(active_contract_list)):
-            if active_contract_list[i].get('destination') == public_key:
+            if active_contract_list[i].get("destination") == public_key:
                 results.append(active_contract_list[i])
         return results
 
@@ -50,54 +50,79 @@ def get_contracts(public_key, search_type):
         return None
 
 
+# Set socket timeout
+socket.timeout(0.2)
+# Get a list of nodes to connect to
+peers = []
+
+with open("port_list.txt", "r") as fin:
+    lines = fin.readlines()
+    peers = [int(x) for x in lines]
+
+
+def node_request(port, json_obj):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect(("localhost", port))
+        s.sendall(json_obj.encode())
+        res = s.recv(5120)
+        return res.decode()
+
+
 def add_contract(source, destination, provider, payload, amount, signedContract):
-    encode_data = source.encode() + destination.encode() + provider.encode() + \
-        payload.encode() + amount.encode()
+    encode_data = (
+        source.encode()
+        + destination.encode()
+        + provider.encode()
+        + payload.encode()
+        + amount.encode()
+    )
     # TEST
     # if not verify_sign(provider, encode_data, signedContract):
     #    return None
     # else:
     ######new_contract = Contract(str(time.time()), source, destination, provider, payload, amount)
-    new_contract = Contract(str(123), source, destination,
-                            provider, payload, amount)
-    token_ledger[source] = str(
-        int(token_ledger[source]) - int(new_contract.stake))
+    new_contract = Contract(str(123), source, destination, provider, payload, amount)
+    token_ledger[source] = str(int(token_ledger[source]) - int(new_contract.stake))
     token_ledger[destination] = str(
-        int(token_ledger[destination]) - int(new_contract.stake))
+        int(token_ledger[destination]) - int(new_contract.stake)
+    )
     active_contract_list.append(new_contract.serialize())
 
-    block_data = generate_data(new_contract.serialize(
-    ), None, token_ledger, active_contract_list)
+    block_data = generate_data(
+        new_contract.serialize(), None, token_ledger, active_contract_list
+    )
     node_chain_instance.add_block(block_data)
 
-    '''
+    """
     for i in range(len(node_chain_instance.block_data)):
         print(str(node_chain_instance.block_data[i]))
     #print((json.loads(node_chain_instance.block_data[-1].data)).get('ledger'))
     print((json.loads(node_chain_instance.block_data[-1].data)))
-    '''
+    """
 
     return block_data
 
 
 def add_transaction(source, destination, provider, payload, amount):
 
-    new_trans = Transaction(str(time.time()), source,
-                            destination, provider, payload, amount)
-    token_ledger[source] = str(
-        int(token_ledger[source]) + int(new_trans.amount))
+    new_trans = Transaction(
+        str(time.time()), source, destination, provider, payload, amount
+    )
+    token_ledger[source] = str(int(token_ledger[source]) + int(new_trans.amount))
     token_ledger[destination] = str(
-        int(token_ledger[destination]) + int(new_trans.amount))
+        int(token_ledger[destination]) + int(new_trans.amount)
+    )
 
     block_data = generate_data(
-        None, new_trans.serialize(), token_ledger, active_contract_list)
+        None, new_trans.serialize(), token_ledger, active_contract_list
+    )
     node_chain_instance.add_block(block_data)
 
-    '''
+    """
     for i in range(len(node_chain_instance.block_data)):
         print(str(node_chain_instance.block_data[i]))
     print((json.loads(node_chain_instance.block_data[-1].data)))
-    '''
+    """
 
     return block_data
 
@@ -109,11 +134,17 @@ def settle_contract(contract_ID, ver_boolean, user, signature):
     #    return None
     # else:
     for i in range(len(active_contract_list)):
-        if contract_ID == active_contract_list[i].get('index'):
-            active_contract_list[i]['status'] = True
+        if contract_ID == active_contract_list[i].get("index"):
+            active_contract_list[i]["status"] = True
             new_data = active_contract_list[i]
             active_contract_list.pop(i)
-            return add_transaction(new_data.get('source'), new_data.get('destination'), new_data.get('provider'), new_data.get('payload'), new_data.get('amount'))
+            return add_transaction(
+                new_data.get("source"),
+                new_data.get("destination"),
+                new_data.get("provider"),
+                new_data.get("payload"),
+                new_data.get("amount"),
+            )
     return None
 
 
@@ -145,7 +176,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         print(f"Pinging {self.transport.get_extra_info('socket')}")
         # should respond with pong
         res = {"opcode": "PONG"}
-        '''
+        """
         print("STARTING CONTRACT\n\n\n\n\n\n\n\n\n\n\n\n\n")
         if add_contract("E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "UGO1pfDVmkscufjn1u4WDu5kNIBNwca0", "IFjH/fgse2+z9VDBtLDRUKUw2tfqf5b+", "water", "10000", "pog"):
             print("IT WORKED\n\n\n\n\n\n\n\n\n\n\n\n\n")
@@ -156,7 +187,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         else:
             print("NO SETTLE")
         quit()
-        '''
+        """
         res = node_chain_instance.block_data[-1].data
 
         self.transport.write(json.dumps(res).encode())
@@ -166,26 +197,33 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         # handle pongs
         print(f"Ponged from {self.transport.get_extra_info('socket')}")
 
-    '''
+    """
     # node list
     node_list = {
         "localhost": 1337,
         "localhost": 1338
     }
     source, destination, provider, payload, amount, signedContract
-    '''
+    """
 
     def addcon_handler(self, json_obj):
         # {"opcode": "ADDCON", "data": <Dict>}
         # sample response
-        res = {
-            "opcode": "ADDCONRES",
-            "data": None
-        }
+        res = {"opcode": "ADDCONRES", "data": None}
 
-        contract = json_obj['data']
-        res['data'] = add_contract(contract.get('source'), contract.get('destination'), contract.get(
-            'provider'), contract.get('payload'), contract.get('amount'), contract.get('signedContract'))
+        contract = json_obj["data"]
+        res["data"] = add_contract(
+            contract.get("source"),
+            contract.get("destination"),
+            contract.get("provider"),
+            contract.get("payload"),
+            contract.get("amount"),
+            contract.get("signedContract"),
+        )
+
+        for peer in peers:
+            if peer != int(argv[1]):
+                node_request(peer, json.dumps(res))
 
         self.transport.write(json.dumps(res).encode())
 
