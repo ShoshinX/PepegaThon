@@ -4,19 +4,19 @@
 // Used by the district office
 GET api/pending_contracts/{user}
  - Returns {
-     ["Contract ID:String", "Source:String", "Payload:String"]
+     ["Contract ID:String", "Source:String", "Payload:String", "Amount:int"]
  }
 
 // Used by the Government to forward payloads onto the district offices.
 GET api/outgoing_contracts/{user}
  - Returns {
-     ["Contract ID:String", "Provider:string", "Destination:String", "Payload:String"]
+     ["Contract ID:String", "Provider:string", "Destination:String", "Payload:String", "Amount:int"]
  }
 
 // Used by the Aid Provider to audit and view all contracts
 GET api/all_contracts/
 - Returns {
-     ["Contract ID:String", "Source:string", "Provider:string", "Destination:String", "Payload:String"]
+     ["Contract ID:String", "Source:string", "Provider:string", "Destination:String", "Payload:String", "Amount:int"]
 }
 
 // Primarily used by the district office to verify payload receipt. May also be used by the district office to close contracts if the deadline has passed.
