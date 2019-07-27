@@ -21,8 +21,10 @@ active_contract_list = []
 # get token ledger
 token_ledger = (json.loads(node_chain_instance.block_data[-1].data)).get("ledger")
 
-# for i in range(len(node_chain_instance.block_data)):
-#    print(str(node_chain_instance.block_data[i]))
+#transactions
+transaction_list = []
+for i in range(len(node_chain_instance.block_data)):
+    transaction_list((json.loads(node_chain_instance.block_data[i].data)).get("transactions")).append()
 
 
 def get_contracts(public_key, search_type):
@@ -111,6 +113,8 @@ def add_contract(source, destination, provider, payload, amount, signedContract)
 
 def add_block_data(block_data):
     node_chain_instance.add_block(block_data)
+    for i in range(len(node_chain_instance.block_data)):
+        transaction_list((json.loads(node_chain_instance.block_data[i].data)).get("transactions")).append()
 
 
 def add_transaction(source, destination, provider, payload, amount):
@@ -127,6 +131,9 @@ def add_transaction(source, destination, provider, payload, amount):
         None, new_trans.serialize(), token_ledger, active_contract_list
     )
     node_chain_instance.add_block(block_data)
+
+    for i in range(len(node_chain_instance.block_data)):
+        transaction_list((json.loads(node_chain_instance.block_data[i].data)).get("transactions")).append()
 
     """
     for i in range(len(node_chain_instance.block_data)):
@@ -322,6 +329,16 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
 
         self.transport.write(json.dumps(res).encode())
 
+    def getalltran_handler(self, json_obj):
+        # {"opcode": "GETALLTRAN", "data": <string>}
+        # sample response
+        res = {"opcode": "GETALLTRAN", "data": None}
+
+        user = json_obj["data"]
+        res["data"] = transaction_list
+
+        self.transport.write(json.dumps(res).encode())
+
     handler_map = {
         "PING": ping_handler,
         "PONG": pong_handler,
@@ -331,7 +348,8 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         "SETCONRES": setconres_handler,
         "GETALLCON": getallcon_handler,
         "GETOUTCON": getoutcon_handler,
-        "GETINCON": getincon_handler
+        "GETINCON": getincon_handler,
+        "GETALLTRAN": getalltran_handler
     }
 
 

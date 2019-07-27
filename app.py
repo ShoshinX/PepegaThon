@@ -48,6 +48,13 @@ class AllContracts(Resource):
         
         return node_request(json.dumps(res))
 
+class AllTransactions(Resource):
+    def get(self):
+        # TODO
+        res = {"opcode": "GETALLTRAN", "data": None}
+        
+        return node_request(json.dumps(res))
+
 
 class VerifyContract(Resource):
     def post(self):
@@ -85,6 +92,7 @@ class MakeContract(Resource):
 api.add_resource(PendingContracts, "/api/pending_contracts/<string:destination>")
 api.add_resource(OutgoingContracts, "/api/outgoing_contracts/<string:provider>")
 api.add_resource(AllContracts, "/api/all_contracts")
+api.add_resource(AllTransactions, "/api/all_transactions")
 api.add_resource(VerifyContract, "/api/verify_contract")
 api.add_resource(MakeContract, "/api/make_contract")
 
