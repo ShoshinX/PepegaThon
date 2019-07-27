@@ -22,7 +22,7 @@ token_ledger = (json.loads(node_chain_instance.block_data[-1].data)).get('ledger
 #for i in range(len(node_chain_instance.block_data)):
 #    print(str(node_chain_instance.block_data[i]))
 
-def add_contract(self, source, destination, payload, amount, provider, signedContract):
+def add_contract(self, source, destination, provider, payload, amount, signedContract):
     pass
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
