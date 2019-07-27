@@ -4,14 +4,27 @@
     let array = [{
         ContractID: "pepega",
         Source: "u",
+        Provider: "xd",
         Destination: "me",
         Payload: "59"
+    }, {
+        ContractID: "pepega",
+        Source: "u",
+        Provider: "xd",
+        Destination: "me",
+        Payload: "59",
     }]
     for (let i = 0; i < array.length; i++) {
         let newRow = document.createElement("tr");
-        for (let j = 0; j < indexArray.length; j++) {
+        for (let j = 0; j < indexArray.length + 1; j++) {
             let newElement = document.createElement("td");
-            newElement.innerText = array[i][indexArray[j]];
+            if (j === indexArray.length) {
+                let newButton = document.createElement("button");
+                newButton.innerText = "verify";
+                newElement.appendChild(newButton);
+            } else {
+                newElement.innerText = array[i][indexArray[j]];
+            }
             newRow.appendChild(newElement);
         }
         for (let j = 0; j < newRow.childElementCount; j++) {
