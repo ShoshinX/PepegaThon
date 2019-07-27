@@ -4,15 +4,22 @@ import asyncio
 from sys import argv
 import signal
 import json
+import base64
 
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
+    pinging = False
+
     def connection_made(self, transport: asyncio.Transport) -> None:
         loop = asyncio.get_event_loop()
         self.client_info = transport.get_extra_info("peername")
         self.transport = transport
         # Close the connection in 10 seconds if no data received.
         self.timeout_timer = loop.call_later(10, self.transport.close)
+
+    def connection_lost(self, exc) -> None:
+        if self.pinging:
+            print("Connection closed with active ping open!")
 
     def data_received(self, data: bytes) -> None:
         self.timeout_timer.cancel()
@@ -25,21 +32,25 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         else:
             print(f"Invalid opcode {opcode}")
 
-        self.transport.close()
-
     def ping_handler(self, json_obj):
         # {"opcode": "PING"}
+        print(f"Pinging {self.transport.get_extra_info('socket')}")
         # should respond with pong
-        # self.transport.write()
+        res = {"opcode": "PONG"}
+        self.transport.write(json.dumps(res).encode())
+        self.pinging = True
         return
 
     def pong_handler(self, json_obj):
         # {"opcode": "PONG"}
         # handle pongs
+        print(f"Ponged from {self.transport.get_extra_info('socket')}")
+        self.pinging = False
         return
 
     def addb_handler(self, json_obj):
-        # {"opcode": "ADDB", "addBlock": <BASE64STR>}
+        # {"opcode": "ADDB", "data": <BASE64STR>}
+        block = base64.decodestring(json_obj["block"])
         return
 
     def addbres_handler(self, json_obj):
@@ -47,7 +58,8 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         return
 
     def valb_handler(self, json_obj):
-        # {"opcode": "VALB", validateBlock: <BASE64STR>}
+        # {"opcode": "VALB", "data": <BASE64STR>}
+        block = base64.decodestring(json_obj["block"])
         return
 
     def valbres_handler(self, json_obj):
@@ -60,6 +72,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
 
     def consensusres_handler(self, json_obj):
         # {"opcode": "CONSENSUSRES", "data": <BASE64STR>}
+        block = base64.decodestring(json_obj["block"])
         return
 
     handler_map = {
