@@ -19,8 +19,16 @@ active_contract_list = []
 # get token ledger
 token_ledger = (json.loads(
     node_chain_instance.block_data[-1].data)).get('ledger')
-#for i in range(len(node_chain_instance.block_data)):
+# node list
+node_list = {
+    "localhost": 1337,
+    "localhost": 1338
+}
+
+# for i in range(len(node_chain_instance.block_data)):
 #    print(str(node_chain_instance.block_data[i]))
+
+
 def get_contracts(public_key, search_type):
     results = {}
     if search_type == "all":
@@ -28,13 +36,13 @@ def get_contracts(public_key, search_type):
 
     elif search_type == "outgoing":
         for i in range(len(active_contract_list)):
-            if (active_contract_list[i].get('source') ==  public_key) or (active_contract_list[i].get('provider') == public_key):
+            if (active_contract_list[i].get('source') == public_key) or (active_contract_list[i].get('provider') == public_key):
                 results.append(active_contract_list[i])
         return results
 
     elif search_type == "incoming":
         for i in range(len(active_contract_list)):
-            if active_contract_list[i].get('destination') ==  public_key:
+            if active_contract_list[i].get('destination') == public_key:
                 results.append(active_contract_list[i])
         return results
 
@@ -45,17 +53,21 @@ def get_contracts(public_key, search_type):
 def add_contract(source, destination, provider, payload, amount, signedContract):
     encode_data = source.encode() + destination.encode() + provider.encode() + \
         payload.encode() + amount.encode()
-    ######TEST
-    #if not verify_sign(provider, encode_data, signedContract):
+    # TEST
+    # if not verify_sign(provider, encode_data, signedContract):
     #    return None
-    #else:
+    # else:
     ######new_contract = Contract(str(time.time()), source, destination, provider, payload, amount)
-    new_contract = Contract(str(123), source, destination, provider, payload, amount)
-    token_ledger[source] = str(int(token_ledger[source]) - int(new_contract.stake))
-    token_ledger[destination] = str(int(token_ledger[destination]) - int(new_contract.stake))
+    new_contract = Contract(str(123), source, destination,
+                            provider, payload, amount)
+    token_ledger[source] = str(
+        int(token_ledger[source]) - int(new_contract.stake))
+    token_ledger[destination] = str(
+        int(token_ledger[destination]) - int(new_contract.stake))
     active_contract_list.append(new_contract.serialize())
 
-    block_data = generate_data(new_contract.serialize(), None, token_ledger, active_contract_list)
+    block_data = generate_data(new_contract.serialize(
+    ), None, token_ledger, active_contract_list)
     node_chain_instance.add_block(block_data)
 
     '''
@@ -67,13 +79,18 @@ def add_contract(source, destination, provider, payload, amount, signedContract)
 
     return block_data
 
+
 def add_transaction(source, destination, provider, payload, amount):
 
-    new_trans = Transaction(str(time.time()), source, destination, provider, payload, amount)
-    token_ledger[source] = str(int(token_ledger[source]) + int(new_trans.amount))
-    token_ledger[destination] = str(int(token_ledger[destination]) + int(new_trans.amount))
+    new_trans = Transaction(str(time.time()), source,
+                            destination, provider, payload, amount)
+    token_ledger[source] = str(
+        int(token_ledger[source]) + int(new_trans.amount))
+    token_ledger[destination] = str(
+        int(token_ledger[destination]) + int(new_trans.amount))
 
-    block_data = generate_data(None, new_trans.serialize(), token_ledger, active_contract_list)
+    block_data = generate_data(
+        None, new_trans.serialize(), token_ledger, active_contract_list)
     node_chain_instance.add_block(block_data)
 
     '''
@@ -84,12 +101,13 @@ def add_transaction(source, destination, provider, payload, amount):
 
     return block_data
 
+
 def settle_contract(contract_ID, ver_boolean, user, signature):
     encode_data = contract_ID.encode() + " ".encode() + ver_boolean.encode()
     ###
-    #if not verify_sign(user, encode_data, signature):
+    # if not verify_sign(user, encode_data, signature):
     #    return None
-    #else:
+    # else:
     for i in range(len(active_contract_list)):
         if contract_ID == active_contract_list[i].get('index'):
             active_contract_list[i]['status'] = True
@@ -97,6 +115,7 @@ def settle_contract(contract_ID, ver_boolean, user, signature):
             active_contract_list.pop(i)
             return add_transaction(new_data.get('source'), new_data.get('destination'), new_data.get('provider'), new_data.get('payload'), new_data.get('amount'))
     return None
+
 
 class SimpleBlockchainProtocol(asyncio.Protocol):
     # Kyou, why lint error? VVV
@@ -126,7 +145,6 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         print(f"Pinging {self.transport.get_extra_info('socket')}")
         # should respond with pong
         res = {"opcode": "PONG"}
-
         '''
         print("STARTING CONTRACT\n\n\n\n\n\n\n\n\n\n\n\n\n")
         if add_contract("E445lM216jZ4Kp1tCqWIKdeSLTA3NXwN", "UGO1pfDVmkscufjn1u4WDu5kNIBNwca0", "IFjH/fgse2+z9VDBtLDRUKUw2tfqf5b+", "water", "10000", "pog"):
@@ -139,7 +157,6 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
             print("NO SETTLE")
         quit()
         '''
-
         res = node_chain_instance.block_data[-1].data
 
         self.transport.write(json.dumps(res).encode())
@@ -149,39 +166,45 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         # handle pongs
         print(f"Ponged from {self.transport.get_extra_info('socket')}")
 
-    def addb_handler(self, json_obj):
-        # {"opcode": "ADDB", "data": <BASE64STR>}
-        block = json_obj["block"]
+    '''
+    # node list
+    node_list = {
+        "localhost": 1337,
+        "localhost": 1338
+    }
+    source, destination, provider, payload, amount, signedContract
+    '''
 
-    def addbres_handler(self, json_obj):
-        # {"opcode": "ADDBRES", "bool": <Boolean>}
+    def addcon_handler(self, json_obj):
+        # {"opcode": "ADDCON", "data": <Dict>}
+        # sample response
+        res = {
+            "opcode": "ADDCONRES",
+            "data": None
+        }
+
+        contract = json_obj['data']
+        res['data'] = add_contract(contract.get('source'), contract.get('destination'), contract.get(
+            'provider'), contract.get('payload'), contract.get('amount'), contract.get('signedContract'))
+
+        self.transport.write(json.dumps(res).encode())
+
+    def addconres_handler(self, json_obj):
+        # {"opcode": "ADDCONRES", "bool": <Boolean>}
         pass
 
-    def valb_handler(self, json_obj):
-        # {"opcode": "VALB", "data": <BASE64STR>}
-        block = base64.decodestring(json_obj["block"])
-
-    def valbres_handler(self, json_obj):
-        # {"opcode": "VALBRES", "bool": <Boolean>}
+    def addconapires_handler(self, json_obj):
+        # {"opcode": "ADDCONAPIRES", "bool": <Boolean>}
         pass
-
-    def consensus_handler(self, json_obj):
-        # {"opcode": "CONSENSUS", "data": <BASE64STR>}
-        pass
-
-    def consensusres_handler(self, json_obj):
-        # {"opcode": "CONSENSUSRES", "data": <BASE64STR>}
-        block = base64.decodestring(json_obj["block"])
 
     handler_map = {
         "PING": ping_handler,
         "PONG": pong_handler,
-        "ADDB": addb_handler,
-        "ADDBRES": addbres_handler,
-        "VALB": valb_handler,
-        "VALBRES": valbres_handler,
-        "CONSENSUS": consensus_handler,
-        "CONSENSUSRES": consensusres_handler,
+        "ADDCON": addcon_handler,
+        "ADDCONRES": addconres_handler,
+        "ADDCONAPIRES": addconapires_handler,
+        "SETCON": setcon_handler,
+        "SETCONRES": setconres_handler,
     }
 
 
