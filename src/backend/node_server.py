@@ -30,7 +30,7 @@ for i in range(len(node_chain_instance.block_data)):
 
 
 def get_contracts(public_key, search_type):
-    results = {}
+    results = []
     if search_type == "all":
         if len(active_contract_list) == 0:
             return results
