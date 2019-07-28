@@ -29,7 +29,7 @@
                             }).then(
                                 (response) => {
                                     console.log(response);
-                                    (response.ok === true) ? newButton.innerText = "OK":
+                                    (response.ok === true) ? newButton.innerText = "NOT OK":
                                         newButton.innerText = "NOT OK";
                                 }
                             );
