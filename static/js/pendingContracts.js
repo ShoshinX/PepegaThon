@@ -27,7 +27,7 @@
                                 },
                                 body: JSON.stringify(json)
                             }).then(
-                                (response) => { if (response.ok === true) document.getElementById("button-" + i).style.backgroundColor = "green"; }
+                                (response) => { console.log(json); if (response.ok === true) document.getElementById("button-" + i).style.backgroundColor = "green"; }
                             );
                         });
                         newButton.innerText = "verify";
@@ -41,7 +41,7 @@
                         } else if (j == 2) {
                             json["Data"] = myJsonArray[i]["payload"];
                         } else if (j == 3) {
-                            json["VerificationBoolean"] = 1;
+                            json["VerificationBoolean"] = "1";
                         }
                     }
                     newRow.appendChild(newElement);

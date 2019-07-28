@@ -1,5 +1,5 @@
 (function() {
-    fetch("http://lvh.me:1337/api/all_contracts")
+    fetch("http://lvh.me:1337/api/all_transactions")
         .then(function(response) {
             return response.json();
         })
