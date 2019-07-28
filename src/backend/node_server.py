@@ -279,7 +279,7 @@ class SimpleBlockchainProtocol(asyncio.Protocol):
         contreq = json_obj["data"]
         res["data"] = settle_contract(
             contreq.get("ContractID"),
-            contreq.get("VerifiedBoolean"),
+            contreq.get("VerificationBoolean"),
             contreq.get("User"),
             contreq.get("Data")
         )
