@@ -151,7 +151,7 @@ def add_transaction(source, destination, provider, payload, amount):
 
 
 def settle_contract(contract_ID, ver_boolean, user, signature):
-    encode_data = contract_ID.encode() + " ".encode() + ver_boolean.encode()
+    #encode_data = contract_ID.encode() + " ".encode() + ver_boolean.encode()
     ###
     # if not verify_sign(user, encode_data, signature):
     #    return None
