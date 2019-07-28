@@ -22,6 +22,6 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then((response) => alert("DEEZNUTS"));
+            .then((response) => alert("Contract Made"));
     });
 })();
