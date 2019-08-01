@@ -20,19 +20,7 @@
                             newButton.id = "button-" + i;
                             newButton.style.backgroundColor = "";
                             console.log("works");
-                            fetch("http://localhost:1337/api/verify_contract", {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify(json)
-                            }).then(
-                                (response) => {
-                                    console.log(response);
-                                    (response.ok === true) ? newButton.innerText = "NOT OK":
-                                        newButton.innerText = "NOT OK";
-                                }
-                            );
+
                             newElement.appendChild(newButton);
                         } else {
                             newElement.innerText = myJsonArray[i][indexArray[j]];
