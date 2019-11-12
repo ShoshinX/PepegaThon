@@ -3,7 +3,7 @@ appdirs==1.4.3
 attrs==19.1.0
 black==19.3b0
 Click==7.0
-ecdsa==0.13.2
+ecdsa==0.13.3
 entrypoints==0.3
 flake8==3.7.8
 Flask==1.1.1
